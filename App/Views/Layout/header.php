@@ -159,7 +159,7 @@ $assets = $config['assets'];
                   <li class="dropdown">
                     <a href="#">Sản phẩm<i class="fa fa-angle-down"></i></a>
                     <ul role="menu" class="sub-menu">
-                      <li><a href="shop.html">Danh sách sản phẩm</a></li>
+                      <li><a href="<?= $base ?>shop.php">Danh sách sản phẩm</a></li>
                       <li>
                         <a href="product-details.html">Chi tiết sản phẩm</a>
                       </li>

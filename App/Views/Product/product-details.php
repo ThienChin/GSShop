@@ -18,22 +18,22 @@ $assets = $config['assets'];
     <meta name="description" content="Mua PC, laptop và phụ kiện chất lượng tại GS-Shop. Giá tốt, giao hàng nhanh.">
     <meta name="author" content="GSShop">
     <title>Chi Tiết Sản Phẩm | GS-Shop</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/font-awesome.min.css" rel="stylesheet">
-    <link href="css/prettyPhoto.css" rel="stylesheet">
-    <link href="css/price-range.css" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/main.css" rel="stylesheet">
-    <link href="css/responsive.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/font-awesome.min.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/prettyPhoto.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/price-range.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/animate.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/main.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/responsive.css" rel="stylesheet">
     <!--[if lt IE 9]>
     <script src="js/html5shiv.js"></script>
     <script src="js/respond.min.js"></script>
     <![endif]-->       
     <link rel="shortcut icon" href="images/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<?= $base ?>assets/images/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="<?= $base ?>assets/images/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="<?= $base ?>assets/images/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="<?= $base ?>assets/images/ico/apple-touch-icon-57-precomposed.png">
 </head>
 <body>
     <header id="header">
@@ -66,7 +66,7 @@ $assets = $config['assets'];
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="logo pull-left">
-                            <a href="index.html"><img src="images/home/logo.png" alt="GSShop Logo" /></a>
+                            <a href="index.html"><img src="<?= $base ?>assets/images/home/logo.png" alt="GSShop Logo" /></a>
                         </div>
                     </div>
                     <div class="col-sm-8">
@@ -475,12 +475,12 @@ $assets = $config['assets'];
     </footer>
     
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-    <script src="js/jquery.js"></script>
-    <script src="js/price-range.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
+    <script src="<?= $base ?>assets/js/jquery.js"></script>
+    <script src="<?= $base ?>assets/js/price-range.js"></script>
+    <script src="<?= $base ?>assets/js/jquery.scrollUp.min.js"></script>
+    <script src="<?= $base ?>assets/js/bootstrap.min.js"></script>
+    <script src="<?= $base ?>assets/js/jquery.prettyPhoto.js"></script>
+    <script src="<?= $base ?>assets/js/main.js"></script>
     <script>
         (function() {
             function c() {

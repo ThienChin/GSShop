@@ -1,3 +1,15 @@
+<?php
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start(); // Chỉ khởi động session nếu chưa có session nào chạy
+}
+
+$config = require 'config.php';
+$base = $config['base'];
+$baseURL = $config['baseURL'];
+$assets = $config['assets'];
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
   <head>
@@ -9,13 +21,13 @@
     />
     <meta name="author" content="GSShop" />
     <title>Danh Sách Sản Phẩm | GS-Shop</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/font-awesome.min.css" rel="stylesheet" />
-    <link href="css/prettyPhoto.css" rel="stylesheet" />
-    <link href="css/price-range.css" rel="stylesheet" />
-    <link href="css/animate.css" rel="stylesheet" />
-    <link href="css/main.css" rel="stylesheet" />
-    <link href="css/responsive.css" rel="stylesheet" />
+    <link href="<?= $base ?>assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/font-awesome.min.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/prettyPhoto.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/price-range.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/animate.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/main.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/responsive.css" rel="stylesheet">
     <!--[if lt IE 9]>
       <script src="js/html5shiv.js"></script>
       <script src="js/respond.min.js"></script>
@@ -571,12 +583,12 @@
       data-cfasync="false"
       src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
     ></script>
-    <script src="js/jquery.js"></script>
-    <script src="js/price-range.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
+    <script src="<?= $base ?>assets/js/jquery.js"></script>
+    <script src="<?= $base ?>assets/js/price-range.js"></script>
+    <script src="<?= $base ?>assets/js/jquery.scrollUp.min.js"></script>
+    <script src="<?= $base ?>assets/js/bootstrap.min.js"></script>
+    <script src="<?= $base ?>assets/js/jquery.prettyPhoto.js"></script>
+    <script src="<?= $base ?>assets/js/main.js"></script>
     <script>
       (function () {
         function c() {
