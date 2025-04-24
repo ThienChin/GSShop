@@ -1,8 +1,8 @@
 <?php
 return array(
-    'base' => '/DuAnT5/',
-    'assets' => '/DuAnT5/assets/',
-    'baseURL' => 'http://localhost/DuAnT5/',
+    'base' => '/GSShop/',
+    'assets' => '/GSShop/assets/',
+    'baseURL' => 'http://localhost/GSShop/',
     'db' => array(
         'host'     => 'localhost',
         'name'     => 'gs_shop',

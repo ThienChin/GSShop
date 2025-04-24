@@ -1,3 +1,15 @@
+<?php
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start(); // Chỉ khởi động session nếu chưa có session nào chạy
+}
+
+$config = require 'config.php';
+$base = $config['base'];
+$baseURL = $config['baseURL'];
+$assets = $config['assets'];
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
