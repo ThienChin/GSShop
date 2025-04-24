@@ -1,3 +1,15 @@
+<?php
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start(); // Chỉ khởi động session nếu chưa có session nào chạy
+}
+
+$config = require 'config.php';
+$base = $config['base'];
+$baseURL = $config['baseURL'];
+$assets = $config['assets'];
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
   <head>
@@ -9,14 +21,14 @@
     />
     <meta name="author" content="GSShop" />
     <title>Đăng Nhập | GS-Shop</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/font-awesome.min.css" rel="stylesheet" />
-    <link href="css/prettyPhoto.css" rel="stylesheet" />
-    <link href="css/price-range.css" rel="stylesheet" />
-    <link href="css/animate.css" rel="stylesheet" />
-    <link href="css/main.css" rel="stylesheet" />
-    <link href="css/responsive.css" rel="stylesheet" />
-    <link href="css/login.css" rel="stylesheet" />
+    <link href="<?= $base ?>assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="<?= $base ?>assets/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="<?= $base ?>assets/css/prettyPhoto.css" rel="stylesheet" />
+    <link href="<?= $base ?>assets/css/price-range.css" rel="stylesheet" />
+    <link href="<?= $base ?>assets/css/animate.css" rel="stylesheet" />
+    <link href="<?= $base ?>assets/css/main.css" rel="stylesheet" />
+    <link href="<?= $base ?>assets/css/responsive.css" rel="stylesheet" />
+    <link href="<?= $base ?>assets/css/login.css" rel="stylesheet" />
     <!--[if lt IE 9]>
       <script src="js/html5shiv.js"></script>
       <script src="js/respond.min.js"></script>
@@ -92,8 +104,8 @@
           <div class="row">
             <div class="col-sm-4">
               <div class="logo pull-left">
-                <a href="index.html"
-                  ><img src="images/home/logo.png" alt="GSShop Logo"
+                <a href="<?= $baseURL ?>home/index"
+                  ><img src="<?= $base ?>assets/images/home/logo.png" alt="GSShop Logo"
                 /></a>
               </div>
             </div>
@@ -107,17 +119,17 @@
                     <a href=""><i class="fa fa-star"></i> Yêu thích</a>
                   </li>
                   <li>
-                    <a href="checkout.html"
+                    <a href="<?= $baseURL ?>cart/checkout"
                       ><i class="fa fa-crosshairs"></i> Thanh toán</a
                     >
                   </li>
                   <li>
-                    <a href="cart.html"
+                    <a href="<?= $baseURL ?>cart/cart"
                       ><i class="fa fa-shopping-cart"></i> Giỏ hàng</a
                     >
                   </li>
                   <li>
-                    <a href="login.html" class="active"
+                    <a href="<?= $baseURL ?>user/login" class="active"
                       ><i class="fa fa-lock"></i> Đăng nhập</a
                     >
                   </li>
@@ -147,20 +159,20 @@
               </div>
               <div class="mainmenu pull-left">
                 <ul class="nav navbar-nav collapse navbar-collapse">
-                  <li><a href="index.html">Trang chủ</a></li>
+                  <li><a href="<?= $baseURL ?>home/index">Trang chủ</a></li>
                   <li class="dropdown">
                     <a href="#">Sản phẩm<i class="fa fa-angle-down"></i></a>
                     <ul role="menu" class="sub-menu">
-                      <li><a href="shop.html">Danh sách sản phẩm</a></li>
+                      <li><a href="<?= $baseURL ?>product/index">Danh sách sản phẩm</a></li>
                       <li>
-                        <a href="product-details.html">Chi tiết sản phẩm</a>
+                        <a href="<?= $baseURL ?>product/detail">Chi tiết sản phẩm</a>
                       </li>
-                      <li><a href="checkout.html">Thanh toán</a></li>
-                      <li><a href="cart.html">Giỏ hàng</a></li>
-                      <li><a href="login.html" class="active">Đăng nhập</a></li>
+                      <li><a href="<?= $baseURL ?>cart/checkout">Thanh toán</a></li>
+                      <li><a href="<?= $baseURL ?>cart/cart">Giỏ hàng</a></li>
+                      <li><a href="<?= $baseURL ?>user/login" class="active">Đăng nhập</a></li>
                     </ul>
                   </li>
-                  <li><a href="contact-us.html">Liên hệ</a></li>
+                  <li><a href="<?= $baseURL ?>user/contact">Liên hệ</a></li>
                 </ul>
               </div>
             </div>
@@ -398,11 +410,11 @@
       </div>
     </footer>
 
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
+    <script src="<?= $base ?>assets/js/jquery.js"></script>
+    <script src="<?= $base ?>assets/js/bootstrap.min.js"></script>
+    <script src="<?= $base ?>assets/js/jquery.scrollUp.min.js"></script>
+    <script src="<?= $base ?>assets/js/jquery.prettyPhoto.js"></script>
+    <script src="<?= $base ?>assets/js/main.js"></script>
     <script>
       // Kiểm tra định dạng số điện thoại
       function validatePhone(phone) {

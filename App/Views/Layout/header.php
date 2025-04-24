@@ -1,4 +1,9 @@
 <?php
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start(); // Chỉ khởi động session nếu chưa có session nào chạy
+}
+
 $config = require 'config.php';
 $base = $config['base'];
 $baseURL = $config['baseURL'];
@@ -115,17 +120,17 @@ $assets = $config['assets'];
                     <a href=""><i class="fa fa-star"></i> Yêu thích</a>
                   </li>
                   <li>
-                    <a href="checkout.html"
+                    <a href="<?= $baseURL ?>cart/checkout"
                       ><i class="fa fa-crosshairs"></i> Thanh toán</a
                     >
                   </li>
                   <li>
-                    <a href="cart.html"
+                    <a href="<?= $baseURL ?>cart/cart"
                       ><i class="fa fa-shopping-cart"></i> Giỏ hàng</a
                     >
                   </li>
                   <li>
-                    <a href="login.html"
+                    <a href="<?= $baseURL ?>user/login"
                       ><i class="fa fa-lock"></i> Đăng nhập</a
                     >
                   </li>
@@ -155,20 +160,20 @@ $assets = $config['assets'];
               </div>
               <div class="mainmenu pull-left">
                 <ul class="nav navbar-nav collapse navbar-collapse">
-                  <li><a href="index.html" class="active">Trang chủ</a></li>
+                  <li><a href="<?= $baseURL ?>home/index" class="active">Trang chủ</a></li>
                   <li class="dropdown">
                     <a href="#">Sản phẩm<i class="fa fa-angle-down"></i></a>
                     <ul role="menu" class="sub-menu">
-                      <li><a href="<?= $base ?>shop.php">Danh sách sản phẩm</a></li>
+                      <li><a href="<?= $baseURL ?>product/index">Danh sách sản phẩm</a></li>
                       <li>
-                        <a href="product-details.html">Chi tiết sản phẩm</a>
+                        <a href="<?= $baseURL ?>product/detail">Chi tiết sản phẩm</a>
                       </li>
-                      <li><a href="checkout.html">Thanh toán</a></li>
-                      <li><a href="cart.html">Giỏ hàng</a></li>
-                      <li><a href="login.html">Đăng nhập</a></li>
+                      <li><a href="<?= $baseURL ?>cart/checkout">Thanh toán</a></li>
+                      <li><a href="<?= $baseURL ?>cart/cart">Giỏ hàng</a></li>
+                      <li><a href="<?= $baseURL ?>user/login">Đăng nhập</a></li>
                     </ul>
                   </li>
-                  <li><a href="contact-us.html">Liên hệ</a></li>
+                  <li><a href="<?= $baseURL ?>user/contact">Liên hệ</a></li>
                 </ul>
               </div>
             </div>

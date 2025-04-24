@@ -1,3 +1,15 @@
+<?php
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start(); // Chỉ khởi động session nếu chưa có session nào chạy
+}
+
+$config = require 'config.php';
+$base = $config['base'];
+$baseURL = $config['baseURL'];
+$assets = $config['assets'];
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -6,13 +18,13 @@
     <meta name="description" content="GSShop - Liên hệ để mua PC, Laptop, Phụ kiện công nghệ">
     <meta name="author" content="GSShop">
     <title>Liên hệ | GSShop</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/font-awesome.min.css" rel="stylesheet">
-    <link href="css/prettyPhoto.css" rel="stylesheet">
-    <link href="css/price-range.css" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/main.css" rel="stylesheet">
-    <link href="css/responsive.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/font-awesome.min.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/prettyPhoto.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/price-range.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/animate.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/main.css" rel="stylesheet">
+    <link href="<?= $base ?>assets/css/responsive.css" rel="stylesheet">
     <!--[if lt IE 9]>
     <script src="js/html5shiv.js"></script>
     <script src="js/respond.min.js"></script>
@@ -52,15 +64,15 @@
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="logo pull-left">
-                            <a href="index.html"><img src="images/home/logo.png" alt="GSShop"></a>
+                            <a href="<?= $baseURL ?>home/index"><img src="<?= $baseURL ?>assets/images/home/logo.png" alt="GSShop"></a>
                         </div>
                     </div>
                     <div class="col-sm-8">
                         <div class="shop-menu pull-right">
                             <ul class="nav navbar-nav">
                                 <li><a href="#"><i class="fa fa-user"></i> Tài khoản</a></li>
-                                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Giỏ hàng</a></li>
-                                <li><a href="login.html"><i class="fa fa-lock"></i> Đăng nhập</a></li>
+                                <li><a href="<?= $baseURL ?>cart/cart"><i class="fa fa-shopping-cart"></i> Giỏ hàng</a></li>
+                                <li><a href="<?= $baseURL ?>user/login"><i class="fa fa-lock"></i> Đăng nhập</a></li>
                             </ul>
                         </div>
                     </div>
@@ -81,15 +93,15 @@
                         </div>
                         <div class="mainmenu pull-left">
                             <ul class="nav navbar-nav collapse navbar-collapse">
-                                <li><a href="index.html">Trang chủ</a></li>
-                                <li class="dropdown"><a href="shop.html">Sản phẩm<i class="fa fa-angle-down"></i></a>
+                                <li><a href="<?= $baseURL ?>home/index">Trang chủ</a></li>
+                                <li class="dropdown"><a href="#">Sản phẩm<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
-                                        <li><a href="shop.html">Danh sách sản phẩm</a></li>
-                                        <li><a href="cart.html">Giỏ hàng</a></li>
-                                        <li><a href="login.html">Đăng nhập</a></li>
+                                        <li><a href="<?= $baseURL ?>product/index">Danh sách sản phẩm</a></li>
+                                        <li><a href="<?= $baseURL ?>cart/cart">Giỏ hàng</a></li>
+                                        <li><a href="<?= $baseURL ?>user/login">Đăng nhập</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="contact-us.html" class="active">Liên hệ</a></li>
+                                <li><a href="<?= $baseURL ?>user/contact" class="active">Liên hệ</a></li>
                             </ul>
                         </div>
                     </div>
@@ -203,15 +215,15 @@
         </div>
     </footer>
 
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="<?= $base ?>assets/js/jquery.js"></script>
+    <script src="<?= $base ?>assets/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
     <script type="text/javascript" src="js/gmaps.js"></script>
-    <script src="js/contact.js"></script>
-    <script src="js/price-range.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
+    <script src="<?= $base ?>assets/js/contact.js"></script>
+    <script src="<?= $base ?>assets/js/price-range.js"></script>
+    <script src="<?= $base ?>assets/js/jquery.scrollUp.min.js"></script>
+    <script src="<?= $base ?>assets/js/jquery.prettyPhoto.js"></script>
+    <script src="<?= $base ?>assets/js/main.js"></script>
     <script>
     (function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93432984cccf675f',t:'MTc0NTMwNDM2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();
     </script>
