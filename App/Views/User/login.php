@@ -167,7 +167,7 @@ $assets = $config['assets'];
                       <li>
                         <a href="<?= $baseURL ?>product/detail">Chi tiết sản phẩm</a>
                       </li>
-                      <li><a href="<?= $baseURL ?>cart/checkout">Thanh toán</a></li>
+                      <li><a href="<?= $baseURL ?>order/checkout">Thanh toán</a></li>
                       <li><a href="<?= $baseURL ?>cart/cart">Giỏ hàng</a></li>
                       <li><a href="<?= $baseURL ?>user/login" class="active">Đăng nhập</a></li>
                     </ul>

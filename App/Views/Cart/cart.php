@@ -74,7 +74,7 @@ $assets = $config['assets'];
                             <ul class="nav navbar-nav">
                                 <li><a href=""><i class="fa fa-user"></i> Tài khoản</a></li>
                                 <li><a href=""><i class="fa fa-star"></i> Yêu thích</a></li>
-                                <li><a href="<?= $baseURL ?>cart/checkout"><i class="fa fa-crosshairs"></i> Thanh toán</a></li>
+                                <li><a href="<?= $baseURL ?>order/checkout"><i class="fa fa-crosshairs"></i> Thanh toán</a></li>
                                 <li><a href="<?= $baseURL ?>cart/cart" class="active"><i class="fa fa-shopping-cart"></i> Giỏ hàng</a></li>
                                 <li><a href="<?= $baseURL ?>user/login"><i class="fa fa-lock"></i> Đăng nhập</a></li>
                             </ul>
@@ -103,7 +103,7 @@ $assets = $config['assets'];
                                     <ul role="menu" class="sub-menu">
                                         <li><a href="<?= $baseURL ?>product/index">Danh sách sản phẩm</a></li>
                                         <li><a href="<?= $baseURL ?>product/detail">Chi tiết sản phẩm</a></li> 
-                                        <li><a href="<?= $baseURL ?>cart/checkout">Thanh toán</a></li> 
+                                        <li><a href="<?= $baseURL ?>order/checkout">Thanh toán</a></li> 
                                         <li><a href="<?= $baseURL ?>cart/cart" class="active">Giỏ hàng</a></li> 
                                         <li><a href="<?= $baseURL ?>user/login">Đăng nhập</a></li> 
                                     </ul>
@@ -131,70 +131,39 @@ $assets = $config['assets'];
                 </ol>
             </div>
             <div class="table-responsive cart_info">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr class="cart_menu">
-                            <td class="image">Sản phẩm</td>
-                            <td class="description"></td>
-                            <td class="price">Đơn giá</td>
-                            <td class="quantity">Số lượng</td>
-                            <td class="total">Thành tiền</td>
-                            <td></td>
-                        </tr>
-                    </thead>
-                    <tbody id="cart-items">
-                        <tr data-id="XPS13-2025">
-                            <td class="cart_product">
-                                <a href="product-details.html"><img src="images/products/dell-xps13.jpg" alt="Laptop Dell XPS 13" style="width: 100px;"></a>
-                            </td>
-                            <td class="cart_description">
-                                <h4><a href="product-details.html">Laptop Dell XPS 13</a></h4>
-                                <p>Web ID: XPS13-2025</p>
-                            </td>
-                            <td class="cart_price">
-                                <p>25,000,000 VNĐ</p>
-                            </td>
-                            <td class="cart_quantity">
-                                <div class="cart_quantity_button">
-                                    <a class="cart_quantity_up" href="#" onclick="updateQuantity('XPS13-2025', 1)"> + </a>
-                                    <input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2" readonly>
-                                    <a class="cart_quantity_down" href="#" onclick="updateQuantity('XPS13-2025', -1)"> - </a>
-                                </div>
-                            </td>
-                            <td class="cart_total">
-                                <p class="cart_total_price">25,000,000 VNĐ</p>
-                            </td>
-                            <td class="cart_delete">
-                                <a class="cart_quantity_delete" href="#" onclick="removeItem('XPS13-2025')"><i class="fa fa-times"></i></a>
-                            </td>
-                        </tr>
-                        <tr data-id="ROG-PC-2025">
-                            <td class="cart_product">
-                                <a href="product-details.html"><img src="images/products/asus-rog-pc.jpg" alt="PC Gaming ASUS ROG" style="width: 100px;"></a>
-                            </td>
-                            <td class="cart_description">
-                                <h4><a href="product-details.html">PC Gaming ASUS ROG</a></h4>
-                                <p>Web ID: ROG-PC-2025</p>
-                            </td>
-                            <td class="cart_price">
-                                <p>35,000,000 VNĐ</p>
-                            </td>
-                            <td class="cart_quantity">
-                                <div class="cart_quantity_button">
-                                    <a class="cart_quantity_up" href="#" onclick="updateQuantity('ROG-PC-2025', 1)"> + </a>
-                                    <input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2" readonly>
-                                    <a class="cart_quantity_down" href="#" onclick="updateQuantity('ROG-PC-2025', -1)"> - </a>
-                                </div>
-                            </td>
-                            <td class="cart_total">
-                                <p class="cart_total_price">35,000,000 VNĐ</p>
-                            </td>
-                            <td class="cart_delete">
-                                <a class="cart_quantity_delete" href="#" onclick="removeItem('ROG-PC-2025')"><i class="fa fa-times"></i></a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <?php if (empty($cartItems)): ?>
+                    <div class="alert alert-info text-center">
+                        Chưa có sản phẩm nào trong giỏ hàng.
+                    </div>
+                <?php else: ?>
+                    <?php $grandTotal = 0; ?>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr class="cart_menu">
+                                <td class="image">Sản phẩm</td>
+                                <td class="description"></td>
+                                <td class="quantity">Số lượng</td>
+                                <td class="price">Đơn giá</td>
+                                <td class="total">Thành tiền</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody id="cart-items">
+                            <?php foreach ($cartItems as $item): ?>
+                                <?php
+                                    $itemTotal = $item['price'] * $item['quantity'];
+                                    $grandTotal += $itemTotal;
+                                ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($item['name']) ?></td>
+                                    <td><?= number_format($item['price'], 0, ',', '.') ?>đ</td>
+                                    <td><?= $item['quantity'] ?></td>
+                                    <td><?= number_format($itemTotal, 0, ',', '.') ?>đ</td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
             </div>
         </div>
     </section>

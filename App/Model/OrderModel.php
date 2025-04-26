@@ -16,6 +16,14 @@ class OrderModel
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function addOrderItem($orderId, $productId, $quantity, $price)
+    {
+        $sql = "INSERT INTO order_items (order_id, product_id, quantity, price)
+                VALUES (?, ?, ?, ?)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$orderId, $productId, $quantity, $price]);
+    }
     
     public function getOrdersByUserId($userId)
     {

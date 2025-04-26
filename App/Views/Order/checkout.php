@@ -103,7 +103,7 @@ $assets = $config['assets'];
                                     <ul role="menu" class="sub-menu">
                                         <li><a href="<?= $baseURL ?>product/index">Danh sách sản phẩm</a></li>
                                         <li><a href="<?= $baseURL ?>product/detail">Chi tiết sản phẩm</a></li> 
-                                        <li><a href="<?= $baseURL ?>cart/checkout" class="active">Thanh toán</a></li> 
+                                        <li><a href="<?= $baseURL ?>order/checkout" class="active">Thanh toán</a></li> 
                                         <li><a href="<?= $baseURL ?>cart/cart">Giỏ hàng</a></li> 
                                         <li><a href="<?= $baseURL ?>user/login">Đăng nhập</a></li> 
                                     </ul>
