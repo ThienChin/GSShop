@@ -257,41 +257,35 @@ include_once 'Layout/header.php';
             <div class="features_items">
               <h2 class="title text-center">Sản Phẩm Nổi Bật</h2>
               <div class="row"><!-- row để Bootstrap xếp ngang -->
+                <!-- Sản Phẩm Nổi Bật -->
                 <?php foreach ($displayProducts as $product): ?>
-                  <div class="col-6 col-sm-4 mb-4"><!-- mỗi sản phẩm 1 cột -->
+                  <div class="col-6 col-sm-4 mb-4">
                     <div class="product-image-wrapper">
                       <div class="single-products">
                         <div class="productinfo text-center">
-                          <img
-                            class="card-img-top"
-                            src="<?= $assets. $product['image'] ?>"
-                            alt="<?= $assets. $product['name'] ?>"
-                          />
+                          <img class="card-img-top" src="<?= $assets . $product['image'] ?>" alt="<?= $assets . $product['name'] ?>" />
                           <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
                           <p><?= htmlspecialchars($product['name']) ?></p>
-
-                          <!-- 2. Dùng form POST cho Add to Cart -->
-                          <form action="<?= $baseURL ?>cart/add" method="post">
-                              <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                              <input type="hidden" name="quantity" vr="1">
-                              <button type="submit" class="btn btn-default add-to-cart">
-                                  <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
-                              </button>
+                          <form action="<?= $baseURL ?>cart/addfeatured" method="post">
+                            <input type="hidden" name="featuredproduct_id" value="<?= $product['id'] ?>">
+                            <input type="hidden" name="source" value="featured">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn btn-default add-to-cart">
+                              <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                            </button>
                           </form>
                         </div>
                         <div class="product-overlay">
                           <div class="overlay-content">
                             <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
                             <p><?= $product['name'] ?></p>
-                            <!-- Nếu vẫn muốn overlay thêm -->
-                            <form action="<?= $baseURL .'cart/add' ?>" method="post">
-                                <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                                <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
-                                <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
-                                <input type="hidden" name="quantity" value="1">
-                                <button type="submit" class="btn btn-default add-to-cart">
-                                    <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
-                                </button>
+                            <form action="<?= $baseURL ?>cart/addfeatured" method="post">
+                              <input type="hidden" name="featuredproduct_id" value="<?= $product['id'] ?>">
+                              <input type="hidden" name="source" value="featured">
+                              <input type="hidden" name="quantity" value="1">
+                              <button type="submit" class="btn btn-default add-to-cart">
+                                <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                              </button>
                             </form>
                           </div>
                         </div>
@@ -308,81 +302,6 @@ include_once 'Layout/header.php';
               </div>
             </div>
 
-            <?php
-              // 1. Giới hạn số sản phẩm, ví dụ chỉ lấy 6 cái đầu
-              $displayProducts = array_slice($recommendProducts, 0, 6);
-            ?>      
-            <div class="recommended_items">
-              <h2 class="title text-center">Sản Phẩm Đề Xuất</h2>
-              <div
-                id="recommended-item-carousel"
-                class="carousel slide"
-                data-ride="carousel"
-              >
-              <?php foreach ($displayProducts as $product): ?>
-                  <div class="col-6 col-sm-4 mb-4"><!-- mỗi sản phẩm 1 cột -->
-                    <div class="product-image-wrapper">
-                      <div class="single-products">
-                        <div class="productinfo text-center">
-                          <img
-                            class="card-img-top"
-                            src="<?= $assets. $product['image'] ?>"
-                            alt="<?= $assets. $product['name'] ?>"
-                          />
-                          <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
-                          <p><?= htmlspecialchars($product['name']) ?></p>
-
-                          <!-- 2. Dùng form POST cho Add to Cart -->
-                          <form action="<?= $baseURL ?>cart/add" method="post">
-                              <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                              <input type="hidden" name="quantity" vr="1">
-                              <button type="submit" class="btn btn-default add-to-cart">
-                                  <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
-                              </button>
-                          </form>
-                        </div>
-                        <div class="product-overlay">
-                          <div class="overlay-content">
-                            <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
-                            <p><?= $product['name'] ?></p>
-                            <!-- Nếu vẫn muốn overlay thêm -->
-                            <form action="<?= $baseURL .'cart/add' ?>" method="post">
-                                <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                                <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
-                                <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
-                                <input type="hidden" name="quantity" value="1">
-                                <button type="submit" class="btn btn-default add-to-cart">
-                                    <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
-                                </button>
-                            </form>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="choose">
-                        <ul class="nav nav-pills nav-justified">
-                          <li><a href="#"><i class="fa fa-plus-square"></i> Yêu thích</a></li>
-                          <li><a href="<?= $baseURL ?>product/detail/<?= $product['id'] ?>"><i class="fa fa-plus-square"></i> Xem chi tiết</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                <?php endforeach; ?>
-                <a
-                  class="left recommended-item-control"
-                  href="#recommended-item-carousel"
-                  data-slide="prev"
-                >
-                  <i class="fa fa-angle-left"></i>
-                </a>
-                <a
-                  class="right recommended-item-control"
-                  href="#recommended-item-carousel"
-                  data-slide="next"
-                >
-                  <i class="fa fa-angle-right"></i>
-                </a>
-              </div>
-            </div>
           </div>
         </div>
       </div>

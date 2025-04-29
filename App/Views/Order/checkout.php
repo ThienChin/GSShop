@@ -1,7 +1,6 @@
 <?php
-
 if (session_status() == PHP_SESSION_NONE) {
-    session_start(); // Chỉ khởi động session nếu chưa có session nào chạy
+    session_start();
 }
 
 $config = require 'config.php';
@@ -66,7 +65,7 @@ $assets = $config['assets'];
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="logo pull-left">
-                            <a href="<?= $baseURL ?>home/index"><img src="<?= $baseURL ?>assets/images/home/logo.png" alt="GSShop Logo" /></a>
+                            <a href="<?= $baseURL ?>home/index"><img src="<?= $base ?>assets/images/home/logo.png" alt="GSShop Logo" /></a>
                         </div>
                     </div>
                     <div class="col-sm-8">
@@ -74,7 +73,7 @@ $assets = $config['assets'];
                             <ul class="nav navbar-nav">
                                 <li><a href=""><i class="fa fa-user"></i> Tài khoản</a></li>
                                 <li><a href=""><i class="fa fa-star"></i> Yêu thích</a></li>
-                                <li><a href="<?= $baseURL ?>cart/checkout" class="active"><i class="fa fa-crosshairs"></i> Thanh toán</a></li>
+                                <li><a href="<?= $baseURL ?>order/checkout" class="active"><i class="fa fa-crosshairs"></i> Thanh toán</a></li>
                                 <li><a href="<?= $baseURL ?>cart/cart"><i class="fa fa-shopping-cart"></i> Giỏ hàng</a></li>
                                 <li><a href="<?= $baseURL ?>user/login"><i class="fa fa-lock"></i> Đăng nhập</a></li>
                             </ul>
@@ -143,7 +142,7 @@ $assets = $config['assets'];
                         <label><input type="radio" name="checkout-option" value="guest" onclick="toggleForms('guest')" checked> Thanh toán không cần đăng ký</label>
                     </li>
                     <li>
-                        <a href="cart.html"><i class="fa fa-times"></i> Quay lại giỏ hàng</a>
+                        <a href="<?= $baseURL ?>cart/cart"><i class="fa fa-times"></i> Quay lại giỏ hàng</a>
                     </li>
                 </ul>
             </div>
@@ -154,19 +153,19 @@ $assets = $config['assets'];
                         <div class="shopper-info" id="register-form" style="display: none;">
                             <p>Thông tin tài khoản</p>
                             <form id="register-form-data">
-                                <input type="text" placeholder="Họ và tên *" required>
-                                <input type="email" placeholder="Email *" required>
-                                <input type="password" placeholder="Mật khẩu *" required>
-                                <input type="password" placeholder="Xác nhận mật khẩu *" required>
+                                <input type="text" name="name" placeholder="Họ và tên *" required>
+                                <input type="email" name="email" placeholder="Email *" required>
+                                <input type="password" name="password" placeholder="Mật khẩu *" required>
+                                <input type="password" name="confirm_password" placeholder="Xác nhận mật khẩu *" required>
                             </form>
                             <a class="btn btn-primary" href="#" onclick="submitRegister()">Đăng ký & Tiếp tục</a>
                         </div>
                         <div class="shopper-info" id="guest-form">
                             <p>Thông tin thanh toán</p>
                             <form id="guest-form-data">
-                                <input type="text" placeholder="Họ và tên *" required>
-                                <input type="email" placeholder="Email *" required>
-                                <input type="text" placeholder="Số điện thoại *" required>
+                                <input type="text" name="name" placeholder="Họ và tên *" required>
+                                <input type="email" name="email" placeholder="Email *" required>
+                                <input type="text" name="phone" placeholder="Số điện thoại *" required>
                             </form>
                         </div>
                     </div>
@@ -174,15 +173,15 @@ $assets = $config['assets'];
                         <div class="bill-to">
                             <p>Địa chỉ giao hàng</p>
                             <form id="billing-form">
-                                <input type="text" placeholder="Địa chỉ *" required>
-                                <select required>
+                                <input type="text" name="address" placeholder="Địa chỉ *" required>
+                                <select name="city" required>
                                     <option value="">-- Chọn Tỉnh/Thành phố --</option>
                                     <option>TP. Hồ Chí Minh</option>
                                     <option>Hà Nội</option>
                                     <option>Đà Nẵng</option>
                                     <option>Cần Thơ</option>
                                 </select>
-                                <input type="text" placeholder="Mã bưu điện (VD: 700000)">
+                                <input type="text" name="zip" placeholder="Mã bưu điện (VD: 700000)">
                             </form>
                         </div>
                     </div>
@@ -212,7 +211,45 @@ $assets = $config['assets'];
                             <td></td>
                         </tr>
                     </thead>
-                    <tbody id="cart-items"></tbody>
+                    <tbody id="cart-items">
+                        <?php
+                        $subtotal = 0;
+                        if (!empty($cartItems)):
+                            foreach ($cartItems as $item):
+                                $total = $item['price'] * $item['quantity'];
+                                $subtotal += $total;
+                                $itemId = isset($item['featuredproduct_id']) ? $item['featuredproduct_id'] : $item['id'];
+                        ?>
+                            <tr data-id="<?= $itemId ?>">
+                                <td class="cart_product">
+                                    <a href="<?= $baseURL ?>product/detail/<?= $itemId ?>">
+                                        <img src="<?= $assets . $item['image'] ?>" alt="<?= $item['name'] ?>" style="width: 100px;">
+                                    </a>
+                                </td>
+                                <td class="cart_description">
+                                    <h4><a href="<?= $baseURL ?>product/detail/<?= $itemId ?>"><?= $item['name'] ?></a></h4>
+                                    <p>ID: <?= $itemId ?></p>
+                                </td>
+                                <td class="cart_price">
+                                    <p><?= number_format($item['price'], 0, ',', '.') ?> VNĐ</p>
+                                </td>
+                                <td class="cart_quantity">
+                                    <input class="cart_quantity_input" type="text" name="quantity" value="<?= $item['quantity'] ?>" readonly size="2">
+                                </td>
+                                <td class="cart_total">
+                                    <p class="cart_total_price"><?= number_format($total, 0, ',', '.') ?> VNĐ</p>
+                                </td>
+                                <td class="cart_delete">
+                                    <a class="cart_quantity_delete" href="#" onclick="removeItem(<?= $itemId ?>)"><i class="fa fa-times"></i></a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" class="text-center">Giỏ hàng trống</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
                     <tfoot>
                         <tr>
                             <td colspan="4"></td>
@@ -220,11 +257,7 @@ $assets = $config['assets'];
                                 <table class="table table-condensed total-result">
                                     <tr>
                                         <td>Tổng tiền hàng</td>
-                                        <td><span id="subtotal">0 VNĐ</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Thuế (5%)</td>
-                                        <td><span id="tax">0 VNĐ</span></td>
+                                        <td><span id="subtotal"><?= number_format($subtotal, 0, ',', '.') ?> VNĐ</span></td>
                                     </tr>
                                     <tr class="shipping-cost">
                                         <td>Phí vận chuyển</td>
@@ -232,7 +265,7 @@ $assets = $config['assets'];
                                     </tr>
                                     <tr>
                                         <td>Tổng cộng</td>
-                                        <td><span id="total">0 VNĐ</span></td>
+                                        <td><span id="total"><?= number_format($subtotal, 0, ',', '.') ?> VNĐ</span></td>
                                     </tr>
                                 </table>
                             </td>
@@ -243,16 +276,25 @@ $assets = $config['assets'];
 
             <div class="payment-options">
                 <h3>Phương thức thanh toán</h3>
-                <span>
-                    <label><input type="radio" name="payment" value="cod" checked> Thanh toán khi nhận hàng (COD)</label>
-                </span>
-                <span>
-                    <label><input type="radio" name="payment" value="bank"> Chuyển khoản ngân hàng</label>
-                </span>
-                <span>
-                    <label><input type="radio" name="payment" value="momo"> Ví MoMo</label>
-                </span>
-                <a class="btn btn-primary" href="#" onclick="placeOrder()">Đặt hàng</a>
+                <form id="payment-form" method="POST" action="<?= $baseURL ?>order/checkout">
+                    <input type="hidden" name="name">
+                    <input type="hidden" name="email">
+                    <input type="hidden" name="phone">
+                    <input type="hidden" name="address">
+                    <input type="hidden" name="city">
+                    <input type="hidden" name="zip">
+                    <input type="hidden" name="notes">
+                    <span>
+                        <label><input type="radio" name="payment_method" value="cod" checked> Thanh toán khi nhận hàng (COD)</label>
+                    </span>
+                    <span>
+                        <label><input type="radio" name="payment_method" value="bank"> Chuyển khoản ngân hàng</label>
+                    </span>
+                    <span>
+                        <label><input type="radio" name="payment_method" value="momo"> Ví MoMo</label>
+                    </span>
+                    <button type="submit" class="btn btn-primary">Đặt hàng</button>
+                </form>
             </div>
         </div>
     </section>
@@ -357,60 +399,6 @@ $assets = $config['assets'];
     <script src="<?= $base ?>assets/js/jquery.prettyPhoto.js"></script>
     <script src="<?= $base ?>assets/js/main.js"></script>
     <script>
-        // Dữ liệu giỏ hàng từ localStorage
-        let cart = JSON.parse(localStorage.getItem('cart')) || [
-            { id: 'XPS13-2025', name: 'Laptop Dell XPS 13', price: 25000000, quantity: 1, image: 'images/products/dell-xps13.jpg' },
-            { id: 'ROG-PC-2025', name: 'PC Gaming ASUS ROG', price: 35000000, quantity: 1, image: 'images/products/asus-rog-pc.jpg' }
-        ];
-
-        // Hiển thị giỏ hàng
-        function renderCart() {
-            const cartItems = document.getElementById('cart-items');
-            cartItems.innerHTML = '';
-            let subtotal = 0;
-
-            cart.forEach(item => {
-                const total = item.price * item.quantity;
-                subtotal += total;
-                cartItems.innerHTML += `
-                    <tr data-id="${item.id}">
-                        <td class="cart_product">
-                            <a href="product-details.html"><img src="${item.image}" alt="${item.name}" style="width: 100px;"></a>
-                        </td>
-                        <td class="cart_description">
-                            <h4><a href="product-details.html">${item.name}</a></h4>
-                            <p>Web ID: ${item.id}</p>
-                        </td>
-                        <td class="cart_price">
-                            <p>${item.price.toLocaleString('vi-VN')} VNĐ</p>
-                        </td>
-                        <td class="cart_quantity">
-                            <input class="cart_quantity_input" type="text" name="quantity" value="${item.quantity}" readonly size="2">
-                        </td>
-                        <td class="cart_total">
-                            <p class="cart_total_price">${total.toLocaleString('vi-VN')} VNĐ</p>
-                        </td>
-                        <td class="cart_delete">
-                            <a class="cart_quantity_delete" href="#" onclick="removeItem('${item.id}')"><i class="fa fa-times"></i></a>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            const tax = subtotal * 0.05;
-            const total = subtotal + tax;
-            document.getElementById('subtotal').textContent = `${subtotal.toLocaleString('vi-VN')} VNĐ`;
-            document.getElementById('tax').textContent = `${tax.toLocaleString('vi-VN')} VNĐ`;
-            document.getElementById('total').textContent = `${total.toLocaleString('vi-VN')} VNĐ`;
-        }
-
-        // Xóa sản phẩm
-        function removeItem(id) {
-            cart = cart.filter(item => item.id !== id);
-            localStorage.setItem('cart', JSON.stringify(cart));
-            renderCart();
-        }
-
         // Chuyển đổi giữa đăng ký và thanh toán không đăng ký
         function toggleForms(option) {
             document.getElementById('register-form').style.display = option === 'register' ? 'block' : 'none';
@@ -432,19 +420,60 @@ $assets = $config['assets'];
         function placeOrder() {
             const guestForm = document.getElementById('guest-form-data');
             const billingForm = document.getElementById('billing-form');
-            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+            const paymentForm = document.getElementById('payment-form');
+            const notes = document.querySelector('textarea[name="message"]').value;
+
+            console.log('Guest Form Valid:', guestForm.checkValidity());
+            console.log('Billing Form Valid:', billingForm.checkValidity());
 
             if (guestForm.checkValidity() && billingForm.checkValidity()) {
-                alert(`Đặt hàng thành công! Phương thức thanh toán: ${paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng' : paymentMethod === 'bank' ? 'Chuyển khoản ngân hàng' : 'Ví MoMo'}.`);
-                localStorage.removeItem('cart'); // Xóa giỏ hàng sau khi đặt hàng
-                window.location.href = 'index.html'; // Chuyển về trang chủ
+                paymentForm.querySelector('input[name="name"]').value = guestForm.querySelector('input[name="name"]').value;
+                paymentForm.querySelector('input[name="email"]').value = guestForm.querySelector('input[name="email"]').value;
+                paymentForm.querySelector('input[name="phone"]').value = guestForm.querySelector('input[name="phone"]').value;
+                paymentForm.querySelector('input[name="address"]').value = billingForm.querySelector('input[name="address"]').value;
+                paymentForm.querySelector('input[name="city"]').value = billingForm.querySelector('select[name="city"]').value;
+                paymentForm.querySelector('input[name="zip"]').value = billingForm.querySelector('input[name="zip"]').value;
+                paymentForm.querySelector('input[name="notes"]').value = notes;
+
+                console.log('Form Data:', {
+                    name: paymentForm.querySelector('input[name="name"]').value,
+                    email: paymentForm.querySelector('input[name="email"]').value,
+                    phone: paymentForm.querySelector('input[name="phone"]').value,
+                    address: paymentForm.querySelector('input[name="address"]').value,
+                    city: paymentForm.querySelector('input[name="city"]').value,
+                    zip: paymentForm.querySelector('input[name="zip"]').value,
+                    notes: notes,
+                    payment_method: paymentForm.querySelector('input[name="payment_method"]:checked').value
+                });
+
+                paymentForm.submit();
             } else {
                 alert('Vui lòng điền đầy đủ thông tin bắt buộc.');
             }
         }
 
-        // Khởi tạo trang
-        window.onload = renderCart;
+        // Xóa sản phẩm
+        function removeItem(id) {
+            if (confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
+                $.ajax({
+                    url: '<?= $baseURL ?>cart/remove',
+                    type: 'POST',
+                    data: { product_id: id },
+                    success: function(response) {
+                        window.location.reload();
+                    },
+                    error: function() {
+                        alert('Đã có lỗi xảy ra, vui lòng thử lại.');
+                    }
+                });
+            }
+        }
+
+        // Gắn sự kiện submit cho form
+        document.getElementById('payment-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            placeOrder();
+        });
     </script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
+if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
@@ -7,9 +7,6 @@ $config = require 'config.php';
 $base = $config['base'];
 $baseURL = $config['baseURL'];
 $assets = $config['assets'];
-
-// Khởi tạo $grandTotal mặc định
-$grandTotal = isset($grandTotal) ? $grandTotal : 0;
 ?>
 
 <!DOCTYPE html>
@@ -17,9 +14,9 @@ $grandTotal = isset($grandTotal) ? $grandTotal : 0;
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Xem và quản lý giỏ hàng của bạn tại GS-Shop. Mua PC, laptop và phụ kiện chất lượng với giá tốt.">
+    <meta name="description" content="Đặt hàng thành công tại GS-Shop. Cảm ơn bạn đã mua sắm với chúng tôi!">
     <meta name="author" content="GSShop">
-    <title>Giỏ Hàng | GS-Shop</title>
+    <title>Đặt Hàng Thành Công | GS-Shop</title>
     <link href="<?= $base ?>assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= $base ?>assets/css/font-awesome.min.css" rel="stylesheet">
     <link href="<?= $base ?>assets/css/prettyPhoto.css" rel="stylesheet">
@@ -27,6 +24,62 @@ $grandTotal = isset($grandTotal) ? $grandTotal : 0;
     <link href="<?= $base ?>assets/css/animate.css" rel="stylesheet">
     <link href="<?= $base ?>assets/css/main.css" rel="stylesheet">
     <link href="<?= $base ?>assets/css/responsive.css" rel="stylesheet">
+    <style>
+        .success-container {
+            text-align: center;
+            padding: 50px 0;
+        }
+        .success-icon {
+            font-size: 80px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .success-container h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .success-container p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .order-summary {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        .order-summary h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .order-summary ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .order-summary ul li {
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .btn-continue {
+            background-color: #fe980f;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .btn-continue:hover {
+            background-color: #e68a00;
+            color: #fff;
+        }
+    </style>
     <!--[if lt IE 9]>
     <script src="js/html5shiv.js"></script>
     <script src="js/respond.min.js"></script>
@@ -46,7 +99,7 @@ $grandTotal = isset($grandTotal) ? $grandTotal : 0;
                         <div class="contactinfo">
                             <ul class="nav nav-pills">
                                 <li><a href=""><i class="fa fa-phone"></i> +84 123 456 789</a></li>
-                                <li><a href=""><i class="fa fa-envelope"></i> info@gsshop.com</a></li>
+                                <li><a href=""><i class="fa fa-envelope"></i> <span class="__cf_email__" data-cfemail="5d1a0e0e35322d1d3a303c3431733e3230">[email protected]</span></a></li>
                             </ul>
                         </div>
                     </div>
@@ -77,7 +130,7 @@ $grandTotal = isset($grandTotal) ? $grandTotal : 0;
                                 <li><a href=""><i class="fa fa-user"></i> Tài khoản</a></li>
                                 <li><a href=""><i class="fa fa-star"></i> Yêu thích</a></li>
                                 <li><a href="<?= $baseURL ?>order/checkout"><i class="fa fa-crosshairs"></i> Thanh toán</a></li>
-                                <li><a href="<?= $baseURL ?>cart/cart" class="active"><i class="fa fa-shopping-cart"></i> Giỏ hàng</a></li>
+                                <li><a href="<?= $baseURL ?>cart/cart"><i class="fa fa-shopping-cart"></i> Giỏ hàng</a></li>
                                 <li><a href="<?= $baseURL ?>user/login"><i class="fa fa-lock"></i> Đăng nhập</a></li>
                             </ul>
                         </div>
@@ -101,12 +154,12 @@ $grandTotal = isset($grandTotal) ? $grandTotal : 0;
                         <div class="mainmenu pull-left">
                             <ul class="nav navbar-nav collapse navbar-collapse">
                                 <li><a href="<?= $baseURL ?>home/index">Trang chủ</a></li>
-                                <li class="dropdown"><a href="#" class="active">Sản phẩm<i class="fa fa-angle-down"></i></a>
+                                <li class="dropdown"><a href="#">Sản phẩm<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
                                         <li><a href="<?= $baseURL ?>product/index">Danh sách sản phẩm</a></li>
                                         <li><a href="<?= $baseURL ?>product/detail">Chi tiết sản phẩm</a></li> 
                                         <li><a href="<?= $baseURL ?>order/checkout">Thanh toán</a></li> 
-                                        <li><a href="<?= $baseURL ?>cart/cart" class="active">Giỏ hàng</a></li> 
+                                        <li><a href="<?= $baseURL ?>cart/cart">Giỏ hàng</a></li> 
                                         <li><a href="<?= $baseURL ?>user/login">Đăng nhập</a></li> 
                                     </ul>
                                 </li> 
@@ -124,121 +177,30 @@ $grandTotal = isset($grandTotal) ? $grandTotal : 0;
         </div>
     </header>
 
-    <section id="cart_items">
+    <section id="success">
         <div class="container">
-            <div class="breadcrumbs">
-                <ol class="breadcrumb">
-                    <li><a href="<?= $baseURL ?>home/index">Trang chủ</a></li>
-                    <li class="active">Giỏ hàng</li>
-                </ol>
-            </div>
-            <div class="table-responsive cart_info">
-                <?php if (empty($cartItems)): ?>
-                    <div class="alert alert-info text-center">
-                        <h4>Chưa có sản phẩm nào trong giỏ hàng.</h4>
-                        <p>Hãy khám phá cửa hàng của chúng tôi để thêm sản phẩm yêu thích!</p>
-                        <a href="<?= $baseURL ?>home/index" class="btn btn-primary">Tiếp tục mua sắm</a>
-                    </div>
-                <?php else: ?>
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr class="cart_menu">
-                                <td class="image">Sản phẩm</td>
-                                <td class="price">Đơn giá</td>
-                                <td class="quantity">Số lượng</td>
-                                <td class="total">Thành tiền</td>
-                                <td></td>
-                            </tr>
-                        </thead>
-                        <tbody id="cart-items">
-                            <?php foreach ($cartItems as $item): ?>
-                                <?php
-                                    $itemTotal = $item['price'] * $item['quantity'];
-                                    $itemId = $item['source'] === 'featured' ? $item['id'] : $item['id'];
-                                ?>
-                                <tr data-id="<?= $itemId ?>" data-source="<?= $item['source'] ?>">
-                                    <td class="cart_description">
-                                        <h4><a href="<?= $baseURL ?>product/detail/<?= $itemId ?>"><?= htmlspecialchars($item['name']) ?></a></h4>
-                                    </td>
-                                    <td class="cart_price">
-                                        <p><?= number_format($item['price'], 0, ',', '.') ?> VNĐ</p>
-                                    </td>
-                                    <td class="cart_quantity">
-                                        <div class="cart_quantity_button">
-                                            <a class="cart_quantity_up" href="#" onclick="updateQuantity(<?= $itemId ?>, '<?= $item['source'] ?>', 1)"> + </a>
-                                            <input class="cart_quantity_input" type="text" name="quantity" value="<?= $item['quantity'] ?>" autocomplete="off" size="2" readonly>
-                                            <a class="cart_quantity_down" href="#" onclick="updateQuantity(<?= $itemId ?>, '<?= $item['source'] ?>', -1)"> - </a>
-                                        </div>
-                                    </td>
-                                    <td class="cart_total">
-                                        <p class="cart_total_price"><?= number_format($itemTotal, 0, ',', '.') ?> VNĐ</p>
-                                    </td>
-                                    <td class="cart_delete">
-                                        <a class="cart_quantity_delete" href="#" onclick="removeItem(<?= $itemId ?>, '<?= $item['source'] ?>')"><i class="fa fa-times"></i></a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php endif; ?>
+            <div class="success-container">
+                <i class="fa fa-check-circle success-icon"></i>
+                <h2>Đặt hàng thành công!</h2>
+                <p>Cảm ơn bạn đã mua sắm tại GS-Shop. Đơn hàng của bạn đã được ghi nhận và sẽ sớm được xử lý.</p>
+                
+                <div class="order-summary">
+                    <h3>Tóm tắt đơn hàng</h3>
+                    <ul>
+                        <li><span>Số đơn hàng:</span> <span>#<?= $order['id'] ?></span></li>
+                        <li><span>Tổng tiền:</span> <span><?= number_format($order['total'], 0, ',', '.') ?> VNĐ</span></li>
+                        <li><span>Phương thức thanh toán:</span> <span>
+                            <?= $order['payment_method'] === 'cod' ? 'Thanh toán khi nhận hàng' : 
+                               ($order['payment_method'] === 'bank' ? 'Chuyển khoản ngân hàng' : 'Ví MoMo') ?>
+                        </span></li>
+                        <li><span>Ngày đặt hàng:</span> <span><?= date('d/m/Y H:i', strtotime($order['order_date'])) ?></span></li>
+                    </ul>
+                </div>
+
+                <a href="<?= $baseURL ?>home/index" class="btn-continue">Tiếp tục mua sắm</a>
             </div>
         </div>
     </section>
-
-    <?php if (!empty($cartItems)): ?>
-        <section id="do_action">
-            <div class="container">
-                <div class="heading">
-                    <h3>Bạn muốn làm gì tiếp theo?</h3>
-                    <p>Chọn nếu bạn muốn sử dụng mã giảm giá hoặc ước tính chi phí vận chuyển.</p>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="chose_area">
-                            <ul class="user_option">
-                                <li>
-                                    <input type="checkbox" id="coupon-checkbox">
-                                    <label>Sử dụng mã giảm giá</label>
-                                </li>
-                                <li id="coupon-input" style="display: none;">
-                                    <input type="text" placeholder="Nhập mã giảm giá" id="coupon-code">
-                                    <button class="btn btn-default" onclick="applyCoupon()">Áp dụng</button>
-                                </li>
-                            </ul>
-                            <ul class="user_info">
-                                <li class="single_field">
-                                    <label>Tỉnh/Thành phố:</label>
-                                    <select>
-                                        <option>TP. Hồ Chí Minh</option>
-                                        <option>Hà Nội</option>
-                                        <option>Đà Nẵng</option>
-                                        <option>Cần Thơ</option>
-                                    </select>
-                                </li>
-                                <li class="single_field zip-field">
-                                    <label>Mã bưu điện:</label>
-                                    <input type="text" placeholder="VD: 700000">
-                                </li>
-                            </ul>
-                            <a class="btn btn-default update" href="#" onclick="estimateShipping()">Ước tính phí vận chuyển</a>
-                            <a class="btn btn-default check_out" href="<?= $baseURL ?>order/checkout">Tiếp tục thanh toán</a>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="total_area">
-                            <ul>
-                                <li>Tổng tiền hàng <span id="subtotal"><?= number_format($grandTotal, 0, ',', '.') ?> VNĐ</span></li>
-                                <li>Phí vận chuyển <span id="shipping">Miễn phí</span></li>
-                                <li>Tổng cộng <span id="total"><?= number_format($grandTotal, 0, ',', '.') ?> VNĐ</span></li>
-                            </ul>
-                            <a class="btn btn-default update" href="#" onclick="updateCart()">Cập nhật</a>
-                            <a class="btn btn-default check_out" href="<?= $baseURL ?>order/checkout">Thanh toán</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    <?php endif; ?>
 
     <footer id="footer">
         <div class="footer-top">
@@ -332,76 +294,12 @@ $grandTotal = isset($grandTotal) ? $grandTotal : 0;
         </div>
     </footer>
 
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script src="<?= $base ?>assets/js/jquery.js"></script>
     <script src="<?= $base ?>assets/js/bootstrap.min.js"></script>
     <script src="<?= $base ?>assets/js/jquery.scrollUp.min.js"></script>
+    <script src="<?= $base ?>assets/js/price-range.js"></script>
     <script src="<?= $base ?>assets/js/jquery.prettyPhoto.js"></script>
     <script src="<?= $base ?>assets/js/main.js"></script>
-    <script>
-        // Cập nhật số lượng sản phẩm
-        function updateQuantity(productId, source, change) {
-            $.ajax({
-                url: '<?= $baseURL ?>cart/update',
-                type: 'POST',
-                data: {
-                    product_id: productId,
-                    source: source,
-                    change: change
-                },
-                success: function(response) {
-                    window.location.reload();
-                },
-                error: function() {
-                    alert('Đã có lỗi xảy ra, vui lòng thử lại.');
-                }
-            });
-        }
-
-        // Xóa sản phẩm khỏi giỏ hàng
-        function removeItem(productId, source) {
-            if (confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
-                $.ajax({
-                    url: '<?= $baseURL ?>cart/remove',
-                    type: 'POST',
-                    data: {
-                        product_id: productId,
-                        source: source
-                    },
-                    success: function(response) {
-                        window.location.reload();
-                    },
-                    error: function() {
-                        alert('Đã có lỗi xảy ra, vui lòng thử lại.');
-                    }
-                });
-            }
-        }
-
-        // Hiển thị/ẩn ô nhập mã giảm giá
-        document.getElementById('coupon-checkbox').addEventListener('change', function() {
-            document.getElementById('coupon-input').style.display = this.checked ? 'block' : 'none';
-        });
-
-        // Áp dụng mã giảm giá (mẫu)
-        function applyCoupon() {
-            const code = document.getElementById('coupon-code').value;
-            if (code === 'GSSHOP2025') {
-                alert('Áp dụng mã giảm giá thành công! Giảm 10% tổng hóa đơn.');
-            } else {
-                alert('Mã giảm giá không hợp lệ.');
-            }
-        }
-
-        // Ước tính phí vận chuyển (mẫu)
-        function estimateShipping() {
-            alert('Phí vận chuyển: Miễn phí cho tất cả đơn hàng!');
-        }
-
-        // Cập nhật giỏ hàng
-        function updateCart() {
-            window.location.reload();
-            alert('Giỏ hàng đã được cập nhật!');
-        }
-    </script>
 </body>
 </html>

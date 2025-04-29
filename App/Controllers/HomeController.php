@@ -7,7 +7,6 @@ class HomeController
     {
         $product = new ProductModel();
         $featuredProducts = $product->getFeaturedProducts(); // Sản phẩm nổi bật
-        $recommendProducts = $product->getRecommendProducts();
         include_once 'App/Views/Home.php';
     }
 }

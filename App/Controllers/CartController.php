@@ -3,6 +3,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
 class CartController
 {
     public function cart()
@@ -11,27 +12,40 @@ class CartController
         $productModel = new ProductModel();
 
         $cartItems = [];
+        $grandTotal = 0;
 
-        if (isset($_SESSION['cart'])) {
+        if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             foreach ($_SESSION['cart'] as $item) {
-                $product = $productModel->getProductById($item['product_id']);
-                $product['quantity'] = $item['quantity'];
-                $cartItems[] = $product;
+                $product = null;
+                if ($item['source'] === 'featured' && isset($item['featuredproduct_id'])) {
+                    $product = $productModel->getFeaturedProductById($item['featuredproduct_id']);
+                    if ($product) {
+                        $product['source'] = 'featured';
+                        $product['id'] = $item['featuredproduct_id'];
+                    }
+                } elseif ($item['source'] === 'product' && isset($item['product_id'])) {
+                    $product = $productModel->getProductById($item['product_id']);
+                    if ($product) {
+                        $product['source'] = 'product';
+                        $product['id'] = $item['product_id'];
+                    }
+                }
+
+                if ($product) {
+                    $product['quantity'] = $item['quantity'];
+                    $product['total'] = $product['price'] * $item['quantity'];
+                    $cartItems[] = $product;
+                    $grandTotal += $product['total'];
+                }
             }
         }
-        if (isset($_SESSION['cart'])) {
-            foreach ($_SESSION['cart'] as $item) {
-                $featuredproduct = $productModel->getFeaturedProductsById($item['product_id']);
-                $featuredproduct['quantity'] = $item['quantity'];
-                $cartItems[] = $featuredproduct;
-            }
-        }
 
-        // var_dump($cartItems);
-        // die;
+        $config = require 'config.php';
+        $base = $config['base'];
+        $baseURL = $config['baseURL'];
+        $assets = $config['assets'];
 
-        include './App/Views/cart/cart.php';    
-
+        include './App/Views/Cart/cart.php';
     }
 
     public function add()
@@ -39,56 +53,100 @@ class CartController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $productId = isset($_POST['product_id']) ? (int)$_POST['product_id'] : 0;
             $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
+            $source = isset($_POST['source']) ? $_POST['source'] : 'product';
 
-            if ($productId > 0) {
-                // Khởi tạo giỏ hàng nếu chưa tồn tại
+            if ($productId > 0 && $source === 'product') {
                 if (!isset($_SESSION['cart'])) {
                     $_SESSION['cart'] = [];
                 }
 
-                // Kiểm tra sản phẩm đã có trong giỏ hàng chưa
                 $found = false;
                 foreach ($_SESSION['cart'] as &$item) {
-                    if ($item['product_id'] === $productId) {
+                    if ($item['product_id'] === $productId && $item['source'] === 'product') {
                         $item['quantity'] += $quantity;
                         $found = true;
                         break;
                     }
                 }
 
-                // Nếu chưa có, thêm mới vào giỏ hàng
                 if (!$found) {
                     $_SESSION['cart'][] = [
                         'product_id' => $productId,
+                        'source' => 'product',
                         'quantity' => $quantity
                     ];
                 }
             }
-        }
-        $config = require 'config.php';
-            
-        $baseURL = $config['baseURL'];
 
-        header('Location:'. $baseURL.'cart/cart');
-        exit;
+            $config = require 'config.php';
+            $baseURL = $config['baseURL'];
+            header('Location: ' . $baseURL . 'cart/cart');
+            exit;
+        }
     }
-    
+
+    public function addfeatured()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $featuredproductId = isset($_POST['featuredproduct_id']) ? (int)$_POST['featuredproduct_id'] : 0;
+            $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
+            $source = isset($_POST['source']) ? $_POST['source'] : 'featured';
+
+            if ($featuredproductId > 0 && $source === 'featured') {
+                if (!isset($_SESSION['cart'])) {
+                    $_SESSION['cart'] = [];
+                }
+
+                $found = false;
+                foreach ($_SESSION['cart'] as &$item) {
+                    if ($item['featuredproduct_id'] === $featuredproductId && $item['source'] === 'featured') {
+                        $item['quantity'] += $quantity;
+                        $found = true;
+                        break;
+                    }
+                }
+
+                if (!$found) {
+                    $_SESSION['cart'][] = [
+                        'featuredproduct_id' => $featuredproductId,
+                        'source' => 'featured',
+                        'quantity' => $quantity
+                    ];
+                }
+            }
+
+            $config = require 'config.php';
+            $baseURL = $config['baseURL'];
+            header('Location: ' . $baseURL . 'cart/cart');
+            exit;
+        }
+    }
+
     public function update()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $productId = isset($_POST['product_id']) ? (int)$_POST['product_id'] : 0;
+            $source = isset($_POST['source']) ? $_POST['source'] : 'product';
             $change = isset($_POST['change']) ? (int)$_POST['change'] : 0;
 
             if ($productId > 0 && isset($_SESSION['cart'])) {
-                foreach ($_SESSION['cart'] as &$item) {
-                    if ($item['product_id'] === $productId) {
-                        $item['quantity'] = max(1, $item['quantity'] + $change);
+                foreach ($_SESSION['cart'] as $key => &$item) {
+                    if (($item['source'] === 'product' && $item['product_id'] === $productId) ||
+                        ($item['source'] === 'featured' && $item['featuredproduct_id'] === $productId)) {
+                        $newQuantity = $item['quantity'] + $change;
+                        if ($newQuantity < 1) {
+                            unset($_SESSION['cart'][$key]);
+                        } else {
+                            $item['quantity'] = $newQuantity;
+                        }
                         break;
                     }
                 }
             }
 
-            echo json_encode(['status' => 'success']);
+            $config = require 'config.php';
+            $baseURL = $config['baseURL'];
+            header('Location: ' . $baseURL . 'cart/cart');
             exit;
         }
     }
@@ -97,14 +155,23 @@ class CartController
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $productId = isset($_POST['product_id']) ? (int)$_POST['product_id'] : 0;
+            $source = isset($_POST['source']) ? $_POST['source'] : 'product';
 
             if ($productId > 0 && isset($_SESSION['cart'])) {
-                $_SESSION['cart'] = array_filter($_SESSION['cart'], function($item) use ($productId) {
-                    return $item['product_id'] !== $productId;
-                });
+                foreach ($_SESSION['cart'] as $key => $item) {
+                    if (($item['source'] === 'product' && $item['product_id'] === $productId) ||
+                        ($item['source'] === 'featured' && $item['featuredproduct_id'] === $productId)) {
+                        unset($_SESSION['cart'][$key]);
+                        break;
+                    }
+                }
+                // Đặt lại chỉ số mảng
+                $_SESSION['cart'] = array_values($_SESSION['cart']);
             }
 
-            echo json_encode(['status' => 'success']);
+            $config = require 'config.php';
+            $baseURL = $config['baseURL'];
+            header('Location: ' . $baseURL . 'cart/cart');
             exit;
         }
     }

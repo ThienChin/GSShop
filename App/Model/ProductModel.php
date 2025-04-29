@@ -23,13 +23,6 @@ class ProductModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getRecommendProducts()
-    {
-        $stmt = $this->db->prepare("SELECT * FROM recommendproducts ORDER BY id ASC");
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
     public function insertProduct($name, $price, $image)
     {
         $sql = "INSERT INTO products (name, price, image) VALUES (?, ?, ?)";
@@ -55,7 +48,7 @@ class ProductModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getFeaturedProductsById($id)
+    public function getFeaturedProductById($id)
     {
         $sql = "SELECT * FROM featuredproducts WHERE id = :id";
         $stmt = $this->db->prepare($sql);

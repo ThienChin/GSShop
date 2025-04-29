@@ -340,43 +340,36 @@ $assets = $config['assets'];
 
           <div class="col-sm-9 padding-right">
           <div class="features_items">
-              <h2 class="title text-center">Sản Phẩm Nổi Bật</h2>
+              <h2 class="title text-center">Danh sách sản phẩm</h2>
               <div class="row"><!-- row để Bootstrap xếp ngang -->
                 <?php foreach ($productList as $product): ?>
-                  <div class="col-6 col-sm-4 mb-4"><!-- mỗi sản phẩm 1 cột -->
+                  <div class="col-6 col-sm-4 mb-4">
                     <div class="product-image-wrapper">
                       <div class="single-products">
                         <div class="productinfo text-center">
-                          <img
-                            class="card-img-top"
-                            src="<?= $assets. $product['image'] ?>"
-                            alt="<?= $assets. $product['name'] ?>"
-                          />
+                          <img class="card-img-top" src="<?= $assets . $product['image'] ?>" alt="<?= $assets . $product['name'] ?>" />
                           <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
                           <p><?= htmlspecialchars($product['name']) ?></p>
-
-                          <!-- 2. Dùng form POST cho Add to Cart -->
                           <form action="<?= $baseURL ?>cart/add" method="post">
-                              <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                              <input type="hidden" name="quantity" vr="1">
-                              <button type="submit" class="btn btn-default add-to-cart">
-                                  <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
-                              </button>
+                            <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                            <input type="hidden" name="source" value="product">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn btn-default add-to-cart">
+                              <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                            </button>
                           </form>
                         </div>
                         <div class="product-overlay">
                           <div class="overlay-content">
                             <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
                             <p><?= $product['name'] ?></p>
-                            <!-- Nếu vẫn muốn overlay thêm -->
-                            <form action="<?= $baseURL .'cart/add' ?>" method="post">
-                                <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                                <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
-                                <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
-                                <input type="hidden" name="quantity" value="1">
-                                <button type="submit" class="btn btn-default add-to-cart">
-                                    <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
-                                </button>
+                            <form action="<?= $baseURL ?>cart/add" method="post">
+                              <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                              <input type="hidden" name="source" value="product">
+                              <input type="hidden" name="quantity" value="1">
+                              <button type="submit" class="btn btn-default add-to-cart">
+                                <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                              </button>
                             </form>
                           </div>
                         </div>
