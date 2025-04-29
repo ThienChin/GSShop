@@ -252,7 +252,7 @@ include_once 'Layout/header.php';
           <div class="col-sm-9 padding-right">
             <?php
               // 1. Giới hạn số sản phẩm, ví dụ chỉ lấy 6 cái đầu
-              $displayProducts = array_slice($productList, 0, 6);
+              $displayProducts = array_slice($featuredProducts, 0, 6);
             ?>
             <div class="features_items">
               <h2 class="title text-center">Sản Phẩm Nổi Bật</h2>
@@ -271,13 +271,12 @@ include_once 'Layout/header.php';
                           <p><?= htmlspecialchars($product['name']) ?></p>
 
                           <!-- 2. Dùng form POST cho Add to Cart -->
-                          <form action="<?= $baseURL ?>cart/cart" method="post">
-                            <input type="hidden" name="product_id"   value="<?= $product['id'] ?>">
-                            <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
-                            <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
-                            <button type="submit" class="btn btn-default add-to-cart">
-                              <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
-                            </button>
+                          <form action="<?= $baseURL ?>cart/add" method="post">
+                              <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                              <input type="hidden" name="quantity" vr="1">
+                              <button type="submit" class="btn btn-default add-to-cart">
+                                  <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                              </button>
                           </form>
                         </div>
                         <div class="product-overlay">
@@ -286,13 +285,13 @@ include_once 'Layout/header.php';
                             <p><?= $product['name'] ?></p>
                             <!-- Nếu vẫn muốn overlay thêm -->
                             <form action="<?= $baseURL .'cart/add' ?>" method="post">
-                              <input type="hidden" name="product_id"   value="<?= $product['id'] ?>">
-                              <input type="hidden" name="product_name" value="<?=$product['name'] ?>">
-                              <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
-                              <input type="hidden" name="quantity" value="1">
-                              <button type="submit" class="btn btn-default add-to-cart">
-                                <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
-                              </button>
+                                <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                                <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
+                                <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-default add-to-cart">
+                                    <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                                </button>
                             </form>
                           </div>
                         </div>
@@ -309,7 +308,10 @@ include_once 'Layout/header.php';
               </div>
             </div>
 
-
+            <?php
+              // 1. Giới hạn số sản phẩm, ví dụ chỉ lấy 6 cái đầu
+              $displayProducts = array_slice($recommendProducts, 0, 6);
+            ?>      
             <div class="recommended_items">
               <h2 class="title text-center">Sản Phẩm Đề Xuất</h2>
               <div
@@ -317,70 +319,54 @@ include_once 'Layout/header.php';
                 class="carousel slide"
                 data-ride="carousel"
               >
-                <div class="carousel-inner">
-                  <div class="item active">
-                    <div class="col-sm-4">
-                      <div class="product-image-wrapper">
-                        <div class="single-products">
-                          <div class="productinfo text-center">
-                            <img
-                              src="images/products/dell-xps13.jpg"
-                              alt="Laptop Dell XPS 13"
-                            />
-                            <h2>25,000,000 VNĐ</h2>
-                            <p>Laptop Dell XPS 13</p>
-                            <a
-                              href="<?= $baseURL ?>cart/cart"
-                              class="btn btn-default add-to-cart"
-                              ><i class="fa fa-shopping-cart"></i>Thêm vào giỏ
-                              hàng</a
-                            >
+              <?php foreach ($displayProducts as $product): ?>
+                  <div class="col-6 col-sm-4 mb-4"><!-- mỗi sản phẩm 1 cột -->
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img
+                            class="card-img-top"
+                            src="<?= $assets. $product['image'] ?>"
+                            alt="<?= $assets. $product['name'] ?>"
+                          />
+                          <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
+                          <p><?= htmlspecialchars($product['name']) ?></p>
+
+                          <!-- 2. Dùng form POST cho Add to Cart -->
+                          <form action="<?= $baseURL ?>cart/add" method="post">
+                              <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                              <input type="hidden" name="quantity" vr="1">
+                              <button type="submit" class="btn btn-default add-to-cart">
+                                  <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                              </button>
+                          </form>
+                        </div>
+                        <div class="product-overlay">
+                          <div class="overlay-content">
+                            <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
+                            <p><?= $product['name'] ?></p>
+                            <!-- Nếu vẫn muốn overlay thêm -->
+                            <form action="<?= $baseURL .'cart/add' ?>" method="post">
+                                <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                                <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
+                                <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-default add-to-cart">
+                                    <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                                </button>
+                            </form>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="col-sm-4">
-                      <div class="product-image-wrapper">
-                        <div class="single-products">
-                          <div class="productinfo text-center">
-                            <img
-                              src="images/products/asus-rog-pc.jpg"
-                              alt="PC Gaming ASUS ROG"
-                            />
-                            <h2>35,000,000 VNĐ</h2>
-                            <p>PC Gaming ASUS ROG</p>
-                            <a
-                              href="<?= $baseURL ?>cart/cart"
-                              class="btn btn-default add-to-cart"
-                              ><i class="fa fa-shopping-cart"></i>Thêm vào giỏ
-                              hàng</a
-                            >
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-sm-4">
-                      <div class="product-image-wrapper">
-                        <div class="single-products">
-                          <div class="productinfo text-center">
-                            <img
-                              src="images/products/logitech-gprox.jpg"
-                              alt="Tai nghe Logitech G Pro X"
-                            />
-                            <h2>3,500,000 VNĐ</h2>
-                            <p>Tai nghe Logitech G Pro X</p>
-                            <a
-                              href="<?= $baseURL ?>cart/cart"
-                              class="btn btn-default add-to-cart"
-                              ><i class="fa fa-shopping-cart"></i>Thêm vào giỏ
-                              hàng</a
-                            >
-                          </div>
-                        </div>
+                      <div class="choose">
+                        <ul class="nav nav-pills nav-justified">
+                          <li><a href="#"><i class="fa fa-plus-square"></i> Yêu thích</a></li>
+                          <li><a href="<?= $baseURL ?>product/detail/<?= $product['id'] ?>"><i class="fa fa-plus-square"></i> Xem chi tiết</a></li>
+                        </ul>
                       </div>
                     </div>
                   </div>
-                </div>
+                <?php endforeach; ?>
                 <a
                   class="left recommended-item-control"
                   href="#recommended-item-carousel"

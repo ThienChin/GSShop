@@ -8,6 +8,7 @@ class ProductModel
     {
         $this->db = Database::connect();
     }
+    
     public function getAllProducts()
     {
         $stmt = $this->db->prepare("SELECT * FROM products ORDER BY id ASC");
@@ -15,16 +16,30 @@ class ProductModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getFeaturedProducts()
+    {
+        $stmt = $this->db->prepare("SELECT * FROM featuredproducts ORDER BY id ASC");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getRecommendProducts()
+    {
+        $stmt = $this->db->prepare("SELECT * FROM recommendproducts ORDER BY id ASC");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function insertProduct($name, $price, $image)
     {
-        $sql = "INSERT INTO products (Name, Price, Image) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO products (name, price, image) VALUES (?, ?, ?)";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$name, $price, $image]);
     }
 
     public function deleteProduct($productId)
     {
-        $sql = "DELETE  FROM products
+        $sql = "DELETE * FROM products
                 WHERE Id = ?";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$productId]);
@@ -33,7 +48,16 @@ class ProductModel
 
     public function getProductById($id)
     {
-        $sql = "SELECT * FROM products WHERE Id = :id";
+        $sql = "SELECT * FROM products WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getFeaturedProductsById($id)
+    {
+        $sql = "SELECT * FROM featuredproducts WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();

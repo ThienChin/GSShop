@@ -141,9 +141,8 @@ $assets = $config['assets'];
                         <thead>
                             <tr class="cart_menu">
                                 <td class="image">Sản phẩm</td>
-                                <td class="description"></td>
-                                <td class="quantity">Số lượng</td>
                                 <td class="price">Đơn giá</td>
+                                <td class="quantity">Số lượng</td>
                                 <td class="total">Thành tiền</td>
                                 <td></td>
                             </tr>
@@ -153,12 +152,28 @@ $assets = $config['assets'];
                                 <?php
                                     $itemTotal = $item['price'] * $item['quantity'];
                                     $grandTotal += $itemTotal;
+                                    //var_dump($item)
                                 ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($item['name']) ?></td>
-                                    <td><?= number_format($item['price'], 0, ',', '.') ?>đ</td>
-                                    <td><?= $item['quantity'] ?></td>
-                                    <td><?= number_format($itemTotal, 0, ',', '.') ?>đ</td>
+                                <tr data-id="<?= $item['id'] ?>">
+                                    <td class="cart_description">
+                                        <h4><a href="<?= $baseURL ?>product/detail"><?= $item['name'] ?></a></h4>
+                                    </td>
+                                    <td class="cart_price">
+                                        <p><?= number_format($item['price'], 0, ',', '.') ?> VNĐ</p>
+                                    </td>
+                                    <td class="cart_quantity">
+                                        <div class="cart_quantity_button">
+                                            <a class="cart_quantity_up" href="#" onclick="updateQuantity(<?= $item['id'] ?>, 1)"> + </a>
+                                            <input class="cart_quantity_input" type="text" name="quantity" value="<?= $item['quantity'] ?>" autocomplete="off" size="2" readonly>
+                                            <a class="cart_quantity_down" href="#" onclick="updateQuantity(<?= $item['id'] ?>, -1)"> - </a>
+                                        </div>
+                                    </td>
+                                    <td class="cart_total">
+                                        <p class="cart_total_price"><?= number_format($itemTotal, 0, ',', '.') ?> VNĐ</p>
+                                    </td>
+                                    <td class="cart_delete">
+                                        <a class="cart_quantity_delete" href="<?= $baseURL ?>Cart/remove" onclick="removeItem(<?= $item['id'] ?>)"><i class="fa fa-times"></i></a>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -209,13 +224,13 @@ $assets = $config['assets'];
                 <div class="col-sm-6">
                     <div class="total_area">
                         <ul>
-                            <li>Tổng tiền hàng <span id="subtotal">60,000,000 VNĐ</span></li>
-                            <li>Thuế (5%) <span id="tax">3,000,000 VNĐ</span></li>
+                            <li>Tổng tiền hàng <span id="subtotal"><?= number_format($grandTotal, 0, ',', '.') ?> VNĐ</span></li>
+                            <li>Thuế (5%) <span id="tax"><?= number_format($grandTotal * 0.05, 0, ',', '.') ?> VNĐ</span></li>
                             <li>Phí vận chuyển <span id="shipping">Miễn phí</span></li>
-                            <li>Tổng cộng <span id="total">63,000,000 VNĐ</span></li>
+                            <li>Tổng cộng <span id="total"><?= number_format($grandTotal * 1.05, 0, ',', '.') ?> VNĐ</span></li>
                         </ul>
                         <a class="btn btn-default update" href="#" onclick="updateCart()">Cập nhật</a>
-                        <a class="btn btn-default check_out" href="checkout.html">Thanh toán</a>
+                        <a class="btn btn-default check_out" href="<?= $baseURL ?>order/checkout">Thanh toán</a>
                     </div>
                 </div>
             </div>
@@ -321,71 +336,41 @@ $assets = $config['assets'];
     <script src="<?= $base ?>assets/js/jquery.prettyPhoto.js"></script>
     <script src="<?= $base ?>assets/js/main.js"></script>
     <script>
-        // Dữ liệu giỏ hàng mẫu (lấy từ localStorage hoặc API trong thực tế)
-        let cart = JSON.parse(localStorage.getItem('cart')) || [
-            { id: 'XPS13-2025', name: 'Laptop Dell XPS 13', price: 25000000, quantity: 1, image: 'images/products/dell-xps13.jpg' },
-            { id: 'ROG-PC-2025', name: 'PC Gaming ASUS ROG', price: 35000000, quantity: 1, image: 'images/products/asus-rog-pc.jpg' }
-        ];
-
-        // Cập nhật giỏ hàng trên giao diện
-        function renderCart() {
-            const cartItems = document.getElementById('cart-items');
-            cartItems.innerHTML = '';
-            let subtotal = 0;
-
-            cart.forEach(item => {
-                const total = item.price * item.quantity;
-                subtotal += total;
-                cartItems.innerHTML += `
-                    <tr data-id="${item.id}">
-                        <td class="cart_product">
-                            <a href="product-details.html"><img src="${item.image}" alt="${item.name}" style="width: 100px;"></a>
-                        </td>
-                        <td class="cart_description">
-                            <h4><a href="product-details.html">${item.name}</a></h4>
-                            <p>Web ID: ${item.id}</p>
-                        </td>
-                        <td class="cart_price">
-                            <p>${item.price.toLocaleString('vi-VN')} VNĐ</p>
-                        </td>
-                        <td class="cart_quantity">
-                            <div class="cart_quantity_button">
-                                <a class="cart_quantity_up" href="#" onclick="updateQuantity('${item.id}', 1)"> + </a>
-                                <input class="cart_quantity_input" type="text" name="quantity" value="${item.quantity}" autocomplete="off" size="2" readonly>
-                                <a class="cart_quantity_down" href="#" onclick="updateQuantity('${item.id}', -1)"> - </a>
-                            </div>
-                        </td>
-                        <td class="cart_total">
-                            <p class="cart_total_price">${total.toLocaleString('vi-VN')} VNĐ</p>
-                        </td>
-                        <td class="cart_delete">
-                            <a class="cart_quantity_delete" href="#" onclick="removeItem('${item.id}')"><i class="fa fa-times"></i></a>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            const tax = subtotal * 0.05;
-            const total = subtotal + tax;
-            document.getElementById('subtotal').textContent = `${subtotal.toLocaleString('vi-VN')} VNĐ`;
-            document.getElementById('tax').textContent = `${tax.toLocaleString('vi-VN')} VNĐ`;
-            document.getElementById('total').textContent = `${total.toLocaleString('vi-VN')} VNĐ`;
-            localStorage.setItem('cart', JSON.stringify(cart));
-        }
-
         // Cập nhật số lượng sản phẩm
-        function updateQuantity(id, change) {
-            const item = cart.find(item => item.id === id);
-            if (item) {
-                item.quantity = Math.max(1, item.quantity + change);
-                renderCart();
-            }
+        function updateQuantity(productId, change) {
+            $.ajax({
+                url: '<?= $baseURL ?>cart/update',
+                type: 'POST',
+                data: {
+                    product_id: productId,
+                    change: change
+                },
+                success: function(response) {
+                    window.location.reload(); // Tải lại trang để cập nhật giỏ hàng
+                },
+                error: function() {
+                    alert('Đã có lỗi xảy ra, vui lòng thử lại.');
+                }
+            });
         }
 
         // Xóa sản phẩm khỏi giỏ hàng
-        function removeItem(id) {
-            cart = cart.filter(item => item.id !== id);
-            renderCart();
+        function removeItem(productId) {
+            if (confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
+                $.ajax({
+                    url: '<?= $baseURL ?>cart/remove',
+                    type: 'POST',
+                    data: {
+                        product_id: productId
+                    },
+                    success: function(response) {
+                        window.location.reload(); // Tải lại trang để cập nhật giỏ hàng
+                    },
+                    error: function() {
+                        alert('Đã có lỗi xảy ra, vui lòng thử lại.');
+                    }
+                });
+            }
         }
 
         // Hiển thị/ẩn ô nhập mã giảm giá
@@ -411,12 +396,9 @@ $assets = $config['assets'];
 
         // Cập nhật giỏ hàng
         function updateCart() {
-            renderCart();
+            window.location.reload();
             alert('Giỏ hàng đã được cập nhật!');
         }
-
-        // Khởi tạo giỏ hàng khi tải trang
-        window.onload = renderCart;
     </script>
 </body>
 </html>

@@ -19,6 +19,14 @@ class CartController
                 $cartItems[] = $product;
             }
         }
+        if (isset($_SESSION['cart'])) {
+            foreach ($_SESSION['cart'] as $item) {
+                $featuredproduct = $productModel->getFeaturedProductsById($item['product_id']);
+                $featuredproduct['quantity'] = $item['quantity'];
+                $cartItems[] = $featuredproduct;
+            }
+        }
+
         // var_dump($cartItems);
         // die;
 
@@ -28,30 +36,76 @@ class CartController
 
     public function add()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' 
-            && isset($_POST['product_id'])) {
-            $productId = $_POST['product_id'];
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $productId = isset($_POST['product_id']) ? (int)$_POST['product_id'] : 0;
+            $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
 
-            if (!isset($_SESSION['cart'])) {
-                $_SESSION['cart'] = [];
-            }
+            if ($productId > 0) {
+                // Khởi tạo giỏ hàng nếu chưa tồn tại
+                if (!isset($_SESSION['cart'])) {
+                    $_SESSION['cart'] = [];
+                }
 
-            if (isset($_SESSION['cart'][$productId])) {
-                $_SESSION['cart'][$productId]['quantity'] += 1;
-            } else {
-                $_SESSION['cart'][$productId] = [
-                    'product_id' => $productId,
-                    'quantity' => 1
-                ];
+                // Kiểm tra sản phẩm đã có trong giỏ hàng chưa
+                $found = false;
+                foreach ($_SESSION['cart'] as &$item) {
+                    if ($item['product_id'] === $productId) {
+                        $item['quantity'] += $quantity;
+                        $found = true;
+                        break;
+                    }
+                }
+
+                // Nếu chưa có, thêm mới vào giỏ hàng
+                if (!$found) {
+                    $_SESSION['cart'][] = [
+                        'product_id' => $productId,
+                        'quantity' => $quantity
+                    ];
+                }
             }
-            $config = require 'config.php';
+        }
+        $config = require 'config.php';
             
-            $baseURL = $config['baseURL'];
-           
+        $baseURL = $config['baseURL'];
 
-            header('Location:'. $baseURL.'/home/index');
+        header('Location:'. $baseURL.'cart/cart');
+        exit;
+    }
+    
+    public function update()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $productId = isset($_POST['product_id']) ? (int)$_POST['product_id'] : 0;
+            $change = isset($_POST['change']) ? (int)$_POST['change'] : 0;
+
+            if ($productId > 0 && isset($_SESSION['cart'])) {
+                foreach ($_SESSION['cart'] as &$item) {
+                    if ($item['product_id'] === $productId) {
+                        $item['quantity'] = max(1, $item['quantity'] + $change);
+                        break;
+                    }
+                }
+            }
+
+            echo json_encode(['status' => 'success']);
             exit;
         }
     }
 
+    public function remove()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $productId = isset($_POST['product_id']) ? (int)$_POST['product_id'] : 0;
+
+            if ($productId > 0 && isset($_SESSION['cart'])) {
+                $_SESSION['cart'] = array_filter($_SESSION['cart'], function($item) use ($productId) {
+                    return $item['product_id'] !== $productId;
+                });
+            }
+
+            echo json_encode(['status' => 'success']);
+            exit;
+        }
+    }
 }
