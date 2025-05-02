@@ -53,7 +53,6 @@ class OrderController
             $shippingAddress = json_encode([
                 'address' => $_POST['address'] ?? '',
                 'city' => $_POST['city'] ?? '',
-                'zip' => $_POST['zip'] ?? ''
             ]);
             $paymentMethod = $_POST['payment_method'] ?? 'cod';
             $notes = $_POST['notes'] ?? '';

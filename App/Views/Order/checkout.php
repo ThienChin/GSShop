@@ -181,7 +181,6 @@ $assets = $config['assets'];
                                     <option>Đà Nẵng</option>
                                     <option>Cần Thơ</option>
                                 </select>
-                                <input type="text" name="zip" placeholder="Mã bưu điện (VD: 700000)">
                             </form>
                         </div>
                     </div>
@@ -282,7 +281,6 @@ $assets = $config['assets'];
                     <input type="hidden" name="phone">
                     <input type="hidden" name="address">
                     <input type="hidden" name="city">
-                    <input type="hidden" name="zip">
                     <input type="hidden" name="notes">
                     <span>
                         <label><input type="radio" name="payment_method" value="cod" checked> Thanh toán khi nhận hàng (COD)</label>
@@ -432,7 +430,6 @@ $assets = $config['assets'];
                 paymentForm.querySelector('input[name="phone"]').value = guestForm.querySelector('input[name="phone"]').value;
                 paymentForm.querySelector('input[name="address"]').value = billingForm.querySelector('input[name="address"]').value;
                 paymentForm.querySelector('input[name="city"]').value = billingForm.querySelector('select[name="city"]').value;
-                paymentForm.querySelector('input[name="zip"]').value = billingForm.querySelector('input[name="zip"]').value;
                 paymentForm.querySelector('input[name="notes"]').value = notes;
 
                 console.log('Form Data:', {

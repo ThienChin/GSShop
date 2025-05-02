@@ -215,10 +215,6 @@ $grandTotal = isset($grandTotal) ? $grandTotal : 0;
                                         <option>Cần Thơ</option>
                                     </select>
                                 </li>
-                                <li class="single_field zip-field">
-                                    <label>Mã bưu điện:</label>
-                                    <input type="text" placeholder="VD: 700000">
-                                </li>
                             </ul>
                             <a class="btn btn-default update" href="#" onclick="estimateShipping()">Ước tính phí vận chuyển</a>
                             <a class="btn btn-default check_out" href="<?= $baseURL ?>order/checkout">Tiếp tục thanh toán</a>
