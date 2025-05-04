@@ -25,16 +25,14 @@ class OrderModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-   public function createOrder($userId, $total, $billingInfo, $shippingAddress, $paymentMethod, $notes)
+    public function createOrder($userId, $total, $billingInfo, $shippingAddress, $paymentMethod, $notes)
     {
         $sql = "INSERT INTO orders (user_id, total, order_date, status, billing_info, shipping_address, payment_method, notes)
                 VALUES (?, ?, NOW(), 'pending', ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
         $result = $stmt->execute([$userId, $total, $billingInfo, $shippingAddress, $paymentMethod, $notes]);
         if (!$result) {
-            echo 'SQL Error: ';
-            var_dump($this->db->errorInfo());
-            die;
+            throw new Exception('Lỗi SQL khi tạo đơn hàng: ' . implode(', ', $this->db->errorInfo()));
         }
         return $this->db->lastInsertId();
     }
@@ -44,7 +42,11 @@ class OrderModel
         $sql = "INSERT INTO order_items (order_id, product_id, featuredproduct_id, quantity, price)
                 VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([$orderId, $productId, $featuredproductId, $quantity, $price]);
+        $result = $stmt->execute([$orderId, $productId, $featuredproductId, $quantity, $price]);
+        if (!$result) {
+            throw new Exception('Lỗi SQL khi thêm mục đơn hàng: ' . implode(', ', $this->db->errorInfo()));
+        }
+        return true;
     }
 
     public function getOrderById($orderId)

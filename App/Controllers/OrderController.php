@@ -42,7 +42,9 @@ class OrderController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (empty($cartItems)) {
-                die('Error: Cart is empty');
+                $_SESSION['error'] = 'Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi thanh toán.';
+                header('Location: ' . $baseURL . 'cart/cart');
+                exit;
             }
 
             $billingInfo = json_encode([
@@ -56,28 +58,36 @@ class OrderController
             ]);
             $paymentMethod = $_POST['payment_method'] ?? 'cod';
             $notes = $_POST['notes'] ?? '';
-            // Gán $userId là null nếu chưa đăng nhập
             $userId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null;
 
-            // Create order
-            $orderId = $orderModel->createOrder($userId, $total, $billingInfo, $shippingAddress, $paymentMethod, $notes);
-            if (!$orderId) {
-                die('Error: Failed to create order. Check database logs for details.');
+            try {
+                // Create order
+                $orderId = $orderModel->createOrder($userId, $total, $billingInfo, $shippingAddress, $paymentMethod, $notes);
+                if (!$orderId) {
+                    throw new Exception('Không thể tạo đơn hàng. Vui lòng thử lại.');
+                }
+
+                // Add order items
+                foreach ($cartItems as $item) {
+                    $productId = $item['source'] === 'product' ? $item['id'] : null;
+                    $featuredproductId = $item['source'] === 'featured' ? $item['id'] : null;
+                    $result = $orderModel->addOrderItem($orderId, $productId, $featuredproductId, $item['quantity'], $item['price']);
+                    if (!$result) {
+                        throw new Exception('Không thể thêm sản phẩm vào đơn hàng. Vui lòng thử lại.');
+                    }
+                }
+
+                // Clear cart
+                unset($_SESSION['cart']);
+
+                // Redirect to checkout success page
+                header('Location: ' . $baseURL . 'order/checkout_success?order_id=' . $orderId);
+                exit;
+            } catch (Exception $e) {
+                $_SESSION['error'] = $e->getMessage();
+                header('Location: ' . $baseURL . 'order/checkout');
+                exit;
             }
-
-            // Add order items
-            foreach ($cartItems as $item) {
-                $productId = $item['source'] === 'product' ? $item['id'] : null;
-                $featuredproductId = $item['source'] === 'featured' ? $item['id'] : null;
-                $orderModel->addOrderItem($orderId, $productId, $featuredproductId, $item['quantity'], $item['price']);
-            }
-
-            // Clear cart
-            unset($_SESSION['cart']);
-
-            // Redirect to checkout success page
-            header('Location: ' . $baseURL . 'order/checkout_success?order_id=' . $orderId);
-            exit;
         }
 
         // Load checkout view

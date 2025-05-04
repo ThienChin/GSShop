@@ -8,19 +8,27 @@ $base = $config['base'];
 $baseURL = $config['baseURL'];
 $assets = $config['assets'];
 
-// Hiển thị thông báo lỗi nếu có
+// Hiển thị thông báo lỗi hoặc thành công nếu có
 $error = isset($_SESSION['error']) ? $_SESSION['error'] : '';
+$success = isset($_SESSION['success']) ? $_SESSION['success'] : '';
 unset($_SESSION['error']);
+unset($_SESSION['success']);
 
 include_once './App/Views/Layout/UserHeader.php'
 ?>
 
+
     <section id="form">
       <div class="form-container">
-        <div class="login-form" id="login-form-container">
+        <div class="signup-form" id="signup-form-container">
           <?php if ($error): ?>
             <div class="error-message" style="display: block; color: red; text-align: center;">
               <?= htmlspecialchars($error) ?>
+            </div>
+          <?php endif; ?>
+          <?php if ($success): ?>
+            <div class="success-message" style="display: block; color: green; text-align: center;">
+              <?= htmlspecialchars($success) ?>
             </div>
           <?php endif; ?>
           <div class="social-login">
@@ -38,48 +46,78 @@ include_once './App/Views/Layout/UserHeader.php'
             >
           </div>
           <div class="divider"><span>hoặc</span></div>
-          <form id="login-form" action="<?= $baseURL ?>user/login" method="POST">
+          <form id="signup-form" action="<?= $baseURL ?>user/register" method="POST">
             <div class="form-group">
-              <label for="login-identifier">Tên đăng nhập hoặc Số điện thoại</label>
+              <label for="signup-name">Họ và tên</label>
               <input
                 type="text"
-                placeholder="Tên đăng nhập hoặc Số điện thoại"
+                placeholder="Họ và tên"
                 required
-                id="login-identifier"
-                name="identifier"
+                id="signup-name"
+                name="name"
               />
-              <div class="error-message" id="login-identifier-error"></div>
+              <div class="error-message" id="signup-name-error"></div>
             </div>
             <div class="form-group">
-              <label for="login-password">Mật khẩu</label>
+              <label for="signup-username">Tên đăng nhập</label>
+              <input
+                type="text"
+                placeholder="Tên đăng nhập"
+                required
+                id="signup-username"
+                name="username"
+              />
+              <div class="error-message" id="signup-username-error"></div>
+            </div>
+            <div class="form-group">
+              <label for="signup-phone">Số điện thoại</label>
+              <input
+                type="tel"
+                placeholder="Số điện thoại"
+                required
+                id="signup-phone"
+                name="phone"
+              />
+              <div class="error-message" id="signup-phone-error"></div>
+            </div>
+            <div class="form-group">
+              <label for="signup-password">Mật khẩu</label>
               <div class="password-container">
                 <input
                   type="password"
-                  placeholder="Nhập mật khẩu"
+                  placeholder="Mật khẩu (ít nhất 8 ký tự)"
                   required
-                  id="login-password"
+                  id="signup-password"
                   name="password"
                 />
-                <span class="toggle-password" onclick="togglePassword('login-password')">
+                <span class="toggle-password" onclick="togglePassword('signup-password')">
                   <i class="fa fa-eye"></i>
                   <i class="fa fa-eye-slash"></i>
                 </span>
               </div>
-              <div class="error-message" id="login-password-error"></div>
+              <div class="error-message" id="signup-password-error"></div>
             </div>
-            <div class="checkbox-container">
-              <label class="checkbox-label">
-                <input type="checkbox" id="remember-me" name="remember" />
-                Ghi nhớ
-              </label>
-              <a href="<?= $baseURL ?>user/forgot_password" class="forgot-password"
-                >Quên mật khẩu?</a
-              >
+            <div class="form-group">
+              <label for="signup-confirm-password">Xác nhận mật khẩu</label>
+              <div class="password-container">
+                <input
+                  type="password"
+                  placeholder="Xác nhận mật khẩu"
+                  required
+                  id="signup-confirm-password"
+                  name="confirm-password"
+                />
+                <span class="toggle-password" onclick="togglePassword('signup-confirm-password')">
+                  <i class="fa fa-eye"></i>
+                  <i class="fa fa-eye-slash"></i>
+                </span>
+              </div>
+              <div class="error-message" id="signup-confirm-password-error"></div>
             </div>
-            <button type="submit" class="btn-login">Đăng nhập</button>
+            <button type="submit" class="btn-login">Đăng ký</button>
           </form>
-          <p class="register-link">
-            Chưa có tài khoản? <a href="<?= $baseURL ?>user/register">Đăng ký ngay</a>
+          <p class="login-link">
+            Đã có tài khoản? <a href="<?= $baseURL ?>user/login">Đăng nhập ngay</a>
           </p>
         </div>
       </div>
@@ -190,11 +228,22 @@ include_once './App/Views/Layout/UserHeader.php'
     <script src="<?= $base ?>assets/js/jquery.prettyPhoto.js"></script>
     <script src="<?= $base ?>assets/js/main.js"></script>
     <script>
-      // Kiểm tra định dạng tên đăng nhập hoặc số điện thoại
-      function validateIdentifier(identifier) {
-        const phoneRe = /^[0-9]{10,11}$/;
-        const usernameRe = /^[a-zA-Z0-9_]{3,20}$/;
-        return phoneRe.test(identifier) || usernameRe.test(identifier);
+      // Kiểm tra định dạng số điện thoại
+      function validatePhone(phone) {
+        const re = /^[0-9]{10,11}$/;
+        return re.test(phone);
+      }
+
+      // Kiểm tra định dạng tên đăng nhập
+      function validateUsername(username) {
+        const re = /^[a-zA-Z0-9_]{3,20}$/;
+        return re.test(username);
+      }
+
+      // Kiểm tra độ mạnh mật khẩu
+      function validatePassword(password) {
+        const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+        return re.test(password);
       }
 
       // Xóa thông báo lỗi
@@ -218,27 +267,54 @@ include_once './App/Views/Layout/UserHeader.php'
         }
       }
 
-      // Xử lý đăng nhập
+      // Xử lý đăng ký
       document
-        .getElementById("login-form")
+        .getElementById("signup-form")
         .addEventListener("submit", function (event) {
           event.preventDefault();
           clearErrors();
-          const identifier = document.getElementById("login-identifier").value;
-          const password = document.getElementById("login-password").value;
+          const name = document.getElementById("signup-name").value;
+          const username = document.getElementById("signup-username").value;
+          const phone = document.getElementById("signup-phone").value;
+          const password = document.getElementById("signup-password").value;
+          const confirmPassword = document.getElementById(
+            "signup-confirm-password"
+          ).value;
           let hasError = false;
 
-          if (!validateIdentifier(identifier)) {
-            document.getElementById("login-identifier-error").textContent =
-              "Vui lòng nhập tên đăng nhập (3-20 ký tự) hoặc số điện thoại (10-11 số).";
-            document.getElementById("login-identifier-error").style.display = "block";
+          if (!name) {
+            document.getElementById("signup-name-error").textContent =
+              "Vui lòng nhập họ và tên.";
+            document.getElementById("signup-name-error").style.display = "block";
             hasError = true;
           }
 
-          if (!password) {
-            document.getElementById("login-password-error").textContent =
-              "Vui lòng nhập mật khẩu.";
-            document.getElementById("login-password-error").style.display = "block";
+          if (!validateUsername(username)) {
+            document.getElementById("signup-username-error").textContent =
+              "Tên đăng nhập phải có 3-20 ký tự, chỉ chứa chữ, số hoặc _.";
+            document.getElementById("signup-username-error").style.display = "block";
+            hasError = true;
+          }
+
+          if (!validatePhone(phone)) {
+            document.getElementById("signup-phone-error").textContent =
+              "Vui lòng nhập số điện thoại hợp lệ (10-11 số).";
+            document.getElementById("signup-phone-error").style.display = "block";
+            hasError = true;
+          }
+
+          if (!validatePassword(password)) {
+            document.getElementById("signup-password-error").textContent =
+              "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số.";
+            document.getElementById("signup-password-error").style.display = "block";
+            hasError = true;
+          }
+
+          if (password !== confirmPassword) {
+            document.getElementById("signup-confirm-password-error").textContent =
+              "Mật khẩu xác nhận không khớp.";
+            document.getElementById("signup-confirm-password-error").style.display =
+              "block";
             hasError = true;
           }
 
@@ -255,20 +331,6 @@ include_once './App/Views/Layout/UserHeader.php'
           } đang được phát triển.`
         );
       }
-
-      // Kiểm tra trạng thái đăng nhập
-      window.onload = function () {
-        const username = "<?= isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : '' ?>";
-        if (username) {
-          const menu = document.querySelector(".shop-menu ul");
-          const loginLink = menu.querySelector('a[href="<?= $baseURL ?>user/login"]');
-          loginLink.innerHTML = `<i class="fa fa-user"></i> ${username}`;
-          loginLink.href = "#";
-          loginLink.onclick = function () {
-            window.location.href = "<?= $baseURL ?>user/logout"; // Điều hướng đến logout
-          };
-        }
-      };
     </script>
   </body>
 </html>

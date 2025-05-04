@@ -112,5 +112,24 @@
     <script src="<?= $base ?>assets/js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js" integrity="sha384-VQqxDN0EQCkWoxt/0vsQvZswzTHUVOImccYmSyhJTp7kGtPed0Qcx8rK9h9YEgx+" crossorigin="anonymous"></script>
+      <script>
+      // Kiểm tra trạng thái đăng nhập và cập nhật menu
+      document.addEventListener('DOMContentLoaded', function () {
+        const username = "<?= isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : '' ?>";
+        if (username) {
+          const menu = document.querySelector(".shop-menu ul");
+          if (menu) {
+            const loginLink = menu.querySelector('a[href="<?= $baseURL ?>user/login"]');
+            if (loginLink) {
+              loginLink.innerHTML = `<i class="fa fa-user"></i> ${username}`;
+              loginLink.href = "#";
+              loginLink.onclick = function () {
+                window.location.href = "<?= $baseURL ?>user/logout";
+              };
+            }
+          }
+        }
+      });
+    </script>
   </body>
 </html>

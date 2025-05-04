@@ -1,14 +1,3 @@
-<?php
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-$config = require 'config.php';
-$base = $config['base'];
-$baseURL = $config['baseURL'];
-$assets = $config['assets'];
-?>
-
 <!DOCTYPE html>
 <html lang="vi">
   <head>
@@ -16,13 +5,11 @@ $assets = $config['assets'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Mua PC, laptop và phụ kiện chất lượng tại GS-Shop. Giá tốt, giao hàng nhanh."
+      content="Đăng nhập tài khoản tại GS-Shop để mua PC, laptop và phụ kiện công nghệ chất lượng."
     />
     <meta name="author" content="GSShop" />
-    <title>Trang chủ | GS-Shop</title>
-    <!-- CSS Boostrap -->
+    <title>Đăng Nhập | GS-Shop</title>
     <link href="<?= $base ?>assets/css/bootstrap.min.css" rel="stylesheet" />
-    <!-- CSS Core Theme -->
     <link href="<?= $base ?>assets/css/font-awesome.min.css" rel="stylesheet" />
     <link href="<?= $base ?>assets/css/prettyPhoto.css" rel="stylesheet" />
     <link href="<?= $base ?>assets/css/price-range.css" rel="stylesheet" />
@@ -34,6 +21,53 @@ $assets = $config['assets'];
       <script src="js/html5shiv.js"></script>
       <script src="js/respond.min.js"></script>
     <![endif]-->
+    <link rel="shortcut icon" href="images/ico/favicon.ico" />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="144x144"
+      href="images/ico/apple-touch-icon-144-precomposed.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="114x114"
+      href="images/ico/apple-touch-icon-114-precomposed.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="72x72"
+      href="images/ico/apple-touch-icon-72-precomposed.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      href="images/ico/apple-touch-icon-57-precomposed.png"
+    />
+    <style>
+      .password-container {
+        position: relative;
+      }
+      .password-container input {
+        width: 100%;
+        padding-right: 40px;
+        box-sizing: border-box;
+      }
+      .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #666;
+      }
+      .toggle-password i.fa-eye-slash {
+        display: none;
+      }
+      .toggle-password.show i.fa-eye {
+        display: none;
+      }
+      .toggle-password.show i.fa-eye-slash {
+        display: inline;
+      }
+    </style>
   </head>
   <body>
     <header id="header">
@@ -51,7 +85,7 @@ $assets = $config['assets'];
                       ><i class="fa fa-envelope"></i>
                       <span
                         class="__cf_email__"
-                        data-cfemail="5d1a0e0e35322d1d3a303c3431733e3230"
+                        data-cfemail="1764626767786563177064647f7867396179"
                         >[email protected]</span
                       ></a
                     >
@@ -68,7 +102,7 @@ $assets = $config['assets'];
                     ></a>
                   </li>
                   <li>
-                    <a href=""><i class="fa fa-twitter"></i></a>
+                    <a href="https://x.com/GSShop"><i class="fa fa-x"></i></a>
                   </li>
                   <li>
                     <a href=""><i class="fa fa-linkedin"></i></a>
@@ -100,7 +134,7 @@ $assets = $config['assets'];
                     <a href=""><i class="fa fa-star"></i> Yêu thích</a>
                   </li>
                   <li>
-                    <a href="<?= $baseURL ?>order/checkout"
+                    <a href="<?= $baseURL ?>cart/checkout"
                       ><i class="fa fa-crosshairs"></i> Thanh toán</a
                     >
                   </li>
@@ -110,15 +144,9 @@ $assets = $config['assets'];
                     >
                   </li>
                   <li>
-                    <?php if (isset($_SESSION['username'])): ?>
-                      <a href="<?= $baseURL ?>user/logout">
-                        <i class="fa fa-user"></i> <?= htmlspecialchars($_SESSION['username']) ?>
-                      </a>
-                    <?php else: ?>
-                      <a href="<?= $baseURL ?>user/login">
-                        <i class="fa fa-lock"></i> Đăng nhập
-                      </a>
-                    <?php endif; ?>
+                    <a href="<?= $baseURL ?>user/login" class="active"
+                      ><i class="fa fa-lock"></i> Đăng nhập</a
+                    >
                   </li>
                 </ul>
               </div>
@@ -138,7 +166,7 @@ $assets = $config['assets'];
                   data-toggle="collapse"
                   data-target=".navbar-collapse"
                 >
-                  <span class="sr-only">Toggle navigation</span>
+                  <span class="sr-only">Chuyển đổi điều hướng</span>
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
@@ -146,7 +174,7 @@ $assets = $config['assets'];
               </div>
               <div class="mainmenu pull-left">
                 <ul class="nav navbar-nav collapse navbar-collapse">
-                  <li><a href="<?= $baseURL ?>home/index" class="active">Trang chủ</a></li>
+                  <li><a href="<?= $baseURL ?>home/index">Trang chủ</a></li>
                   <li class="dropdown">
                     <a href="#">Sản phẩm<i class="fa fa-angle-down"></i></a>
                     <ul role="menu" class="sub-menu">
@@ -156,7 +184,7 @@ $assets = $config['assets'];
                       </li>
                       <li><a href="<?= $baseURL ?>order/checkout">Thanh toán</a></li>
                       <li><a href="<?= $baseURL ?>cart/cart">Giỏ hàng</a></li>
-                      <li><a href="<?= $baseURL ?>user/login">Đăng nhập</a></li>
+                      <li><a href="<?= $baseURL ?>user/login" class="active">Đăng nhập</a></li>
                     </ul>
                   </li>
                   <li><a href="<?= $baseURL ?>user/contact">Liên hệ</a></li>

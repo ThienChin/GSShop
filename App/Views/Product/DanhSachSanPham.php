@@ -1,5 +1,4 @@
 <?php
-
 if (session_status() == PHP_SESSION_NONE) {
     session_start(); // Chỉ khởi động session nếu chưa có session nào chạy
 }
@@ -8,193 +7,57 @@ $config = require 'config.php';
 $base = $config['base'];
 $baseURL = $config['baseURL'];
 $assets = $config['assets'];
+
+// Số sản phẩm mỗi trang
+$productsPerPage = 9;
+
+// Lấy trang hiện tại từ URL, mặc định là 1 nếu không có
+$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($currentPage < 1) $currentPage = 1;
+
+// Lấy danh mục từ URL (nếu có), mặc định là null
+$category = isset($_GET['category']) ? $_GET['category'] : null;
+
+// Lấy thương hiệu từ URL (nếu có), mặc định là null
+$brand = isset($_GET['brand']) ? $_GET['brand'] : null;
+
+// Lọc sản phẩm theo danh mục nếu có
+$filteredProducts = $productList;
+if ($category) {
+    $filteredProducts = array_filter($filteredProducts, function($product) use ($category) {
+        return isset($product['category']) && $product['category'] === $category;
+    });
+}
+
+// Lọc sản phẩm theo thương hiệu nếu có
+if ($brand) {
+    $filteredProducts = array_filter($filteredProducts, function($product) use ($brand) {
+        return stripos($product['name'], $brand) !== false;
+    });
+}
+
+// Tính tổng số trang
+$totalProducts = count($filteredProducts); // Số lượng sản phẩm sau khi lọc
+$totalPages = ceil($totalProducts / $productsPerPage);
+
+// Đảm bảo trang hiện tại không vượt quá số trang tối đa
+if ($currentPage > $totalPages) $currentPage = $totalPages;
+
+// Tính offset để lấy đúng sản phẩm cho trang hiện tại
+$offset = ($currentPage - 1) * $productsPerPage;
+
+// Lấy danh sách sản phẩm cho trang hiện tại
+$productList = array_slice($filteredProducts, $offset, $productsPerPage);
+
+
+include_once './App/Views/Layout/header.php';
+
 ?>
-
-<!DOCTYPE html>
-<html lang="vi">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Mua PC, laptop và phụ kiện chất lượng tại GS-Shop. Giá tốt, giao hàng nhanh."
-    />
-    <meta name="author" content="GSShop" />
-    <title>Danh Sách Sản Phẩm | GS-Shop</title>
-    <link href="<?= $base ?>assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= $base ?>assets/css/font-awesome.min.css" rel="stylesheet">
-    <link href="<?= $base ?>assets/css/prettyPhoto.css" rel="stylesheet">
-    <link href="<?= $base ?>assets/css/price-range.css" rel="stylesheet">
-    <link href="<?= $base ?>assets/css/animate.css" rel="stylesheet">
-    <link href="<?= $base ?>assets/css/main.css" rel="stylesheet">
-    <link href="<?= $base ?>assets/css/responsive.css" rel="stylesheet">
-    <!--[if lt IE 9]>
-      <script src="js/html5shiv.js"></script>
-      <script src="js/respond.min.js"></script>
-    <![endif]-->
-    <link rel="shortcut icon" href="images/ico/favicon.ico" />
-    <link
-      rel="apple-touch-icon-precomposed"
-      sizes="144x144"
-      href="images/ico/apple-touch-icon-144-precomposed.png"
-    />
-    <link
-      rel="apple-touch-icon-precomposed"
-      sizes="114x114"
-      href="images/ico/apple-touch-icon-114-precomposed.png"
-    />
-    <link
-      rel="apple-touch-icon-precomposed"
-      sizes="72x72"
-      href="images/ico/apple-touch-icon-72-precomposed.png"
-    />
-    <link
-      rel="apple-touch-icon-precomposed"
-      href="images/ico/apple-touch-icon-57-precomposed.png"
-    /></head
-  ><!--/head-->
-
-  <body>
-    <header id="header">
-      <div class="header_top">
-        <div class="container">
-          <div class="row">
-            <div class="col-sm-6">
-              <div class="contactinfo">
-                <ul class="nav nav-pills">
-                  <li>
-                    <a href=""><i class="fa fa-phone"></i> +84 123 456 789</a>
-                  </li>
-                  <li>
-                    <a href=""
-                      ><i class="fa fa-envelope"></i>
-                      <span
-                        class="__cf_email__"
-                        data-cfemail="5d1a0e0e35322d1d3a303c3431733e3230"
-                        >[email&#160;protected]</span
-                      ></a
-                    >
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-sm-6">
-              <div class="social-icons pull-right">
-                <ul class="nav navbar-nav">
-                  <li>
-                    <a href="https://facebook.com/GSShop"
-                      ><i class="fa fa-facebook"></i
-                    ></a>
-                  </li>
-                  <li>
-                    <a href=""><i class="fa fa-twitter"></i></a>
-                  </li>
-                  <li>
-                    <a href=""><i class="fa fa-linkedin"></i></a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="header-middle">
-        <div class="container">
-          <div class="row">
-            <div class="col-sm-4">
-              <div class="logo pull-left">
-                <a href="<?= $baseURL ?>home/index"
-                  ><img src="<?= $baseURL ?>assets/images/home/logo.png" alt="GSShop Logo"
-                /></a>
-              </div>
-            </div>
-            <div class="col-sm-8">
-              <div class="shop-menu pull-right">
-                <ul class="nav navbar-nav">
-                  <li>
-                    <a href=""><i class="fa fa-user"></i> Tài khoản</a>
-                  </li>
-                  <li>
-                    <a href=""><i class="fa fa-star"></i> Yêu thích</a>
-                  </li>
-                  <li>
-                    <a href="<?= $baseURL ?>cart/checkout"
-                      ><i class="fa fa-crosshairs"></i> Thanh toán</a
-                    >
-                  </li>
-                  <li>
-                    <a href="<?= $baseURL ?>cart/cart"
-                      ><i class="fa fa-shopping-cart"></i> Giỏ hàng</a
-                    >
-                  </li>
-                  <li>
-                    <a href="<?= $baseURL ?>user/login"
-                      ><i class="fa fa-lock"></i> Đăng nhập</a
-                    >
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="header-bottom">
-        <div class="container">
-          <div class="row">
-            <div class="col-sm-9">
-              <div class="navbar-header">
-                <button
-                  type="button"
-                  class="navbar-toggle"
-                  data-toggle="collapse"
-                  data-target=".navbar-collapse"
-                >
-                  <span class="sr-only">Chuyển đổi điều hướng</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                </button>
-              </div>
-              <div class="mainmenu pull-left">
-                <ul class="nav navbar-nav collapse navbar-collapse">
-                  <li><a href="<?= $baseURL ?>home/index">Trang chủ</a></li>
-                  <li class="dropdown">
-                    <a href="#" class="active"
-                      >Sản phẩm<i class="fa fa-angle-down"></i
-                    ></a>
-                    <ul role="menu" class="sub-menu">
-                      <li>
-                        <a href="<?= $baseURL ?>product/index" class="active"
-                          >Danh sách sản phẩm</a>
-                      </li>
-                      <li>
-                        <a href="<?= $baseURL ?>product/detail">Chi tiết sản phẩm</a>
-                      </li>
-                      <li><a href="<?= $baseURL ?>order/checkout">Thanh toán</a></li>
-                      <li><a href="<?= $baseURL ?>cart/cart">Giỏ hàng</a></li>
-                      <li><a href="<?= $baseURL ?>user/login">Đăng nhập</a></li>
-                    </ul>
-                  </li>
-                  <li><a href="<?= $baseURL ?>user/contact">Liên hệ</a></li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-sm-3">
-              <div class="search_box pull-right">
-                <input type="text" placeholder="Tìm kiếm sản phẩm..." />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
 
     <section id="advertisement">
       <div class="container" style="text-align: center">
         <img
-          src="images/home/shipping.png"
+          src="images/home/shipping.jpg"
           alt="Khuyến mãi GSShop"
           style="height: 150px; width: 620px"
         />
@@ -226,9 +89,9 @@ $assets = $config['assets'];
                   <div id="laptops" class="panel-collapse collapse">
                     <div class="panel-body">
                       <ul>
-                        <li><a href="">Laptop Gaming</a></li>
-                        <li><a href="">Laptop Văn phòng</a></li>
-                        <li><a href="">Ultrabook</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=laptop_gaming">Laptop Gaming</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=laptop_van_phong">Laptop Văn phòng</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=ultrabook">Ultrabook</a></li>
                       </ul>
                     </div>
                   </div>
@@ -251,9 +114,9 @@ $assets = $config['assets'];
                   <div id="pcs" class="panel-collapse collapse">
                     <div class="panel-body">
                       <ul>
-                        <li><a href="">PC Gaming</a></li>
-                        <li><a href="">PC Đồ họa</a></li>
-                        <li><a href="">PC Văn phòng</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=pc_gaming">PC Gaming</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=pc_do_hoa">PC Đồ họa</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=pc_van_phong">PC Văn phòng</a></li>
                       </ul>
                     </div>
                   </div>
@@ -276,10 +139,10 @@ $assets = $config['assets'];
                   <div id="accessories" class="panel-collapse collapse">
                     <div class="panel-body">
                       <ul>
-                        <li><a href="">Tai nghe</a></li>
-                        <li><a href="">Bàn phím</a></li>
-                        <li><a href="">Chuột</a></li>
-                        <li><a href="">Màn hình</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=tai_nghe">Tai nghe</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=ban_phim">Bàn phím</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=chuot">Chuột</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=man_hinh">Màn hình</a></li>
                       </ul>
                     </div>
                   </div>
@@ -291,21 +154,21 @@ $assets = $config['assets'];
                 <div class="brands-name">
                   <ul class="nav nav-pills nav-stacked">
                     <li>
-                      <a href=""> <span class="pull-right">(50)</span>Dell</a>
+                      <a href="<?= $baseURL ?>product/index?brand=Dell"><span class="pull-right"></span>Dell</a>
                     </li>
                     <li>
-                      <a href=""> <span class="pull-right">(30)</span>HP</a>
+                      <a href="<?= $baseURL ?>product/index?brand=HP"><span class="pull-right"></span>HP</a>
                     </li>
                     <li>
-                      <a href=""> <span class="pull-right">(20)</span>ASUS</a>
+                      <a href="<?= $baseURL ?>product/index?brand=ASUS"><span class="pull-right"></span>ASUS</a>
                     </li>
                     <li>
-                      <a href="">
-                        <span class="pull-right">(15)</span>Logitech</a
+                      <a href="<?= $baseURL ?>product/index?brand=Logitech">
+                        <span class="pull-right"></span>Logitech</a
                       >
                     </li>
                     <li>
-                      <a href=""> <span class="pull-right">(10)</span>Lenovo</a>
+                      <a href="<?= $baseURL ?>product/index?brand=Lenovo"><span class="pull-right"></span>Lenovo</a>
                     </li>
                   </ul>
                 </div>
@@ -340,36 +203,43 @@ $assets = $config['assets'];
 
           <div class="col-sm-9 padding-right">
           <div class="features_items">
-              <h2 class="title text-center">Danh sách sản phẩm</h2>
+              <h2 class="title text-center">Sản Phẩm Nổi Bật</h2>
               <div class="row"><!-- row để Bootstrap xếp ngang -->
                 <?php foreach ($productList as $product): ?>
-                  <div class="col-6 col-sm-4 mb-4">
+                  <div class="col-6 col-sm-4 mb-4"><!-- mỗi sản phẩm 1 cột -->
                     <div class="product-image-wrapper">
                       <div class="single-products">
                         <div class="productinfo text-center">
-                          <img class="card-img-top" src="<?= $assets . $product['image'] ?>" alt="<?= $assets . $product['name'] ?>" />
+                          <img
+                            class="card-img-top"
+                            src="<?= $assets. $product['image'] ?>"
+                            alt="<?= $assets. $product['name'] ?>"
+                          />
                           <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
                           <p><?= htmlspecialchars($product['name']) ?></p>
+
+                          <!-- 2. Dùng form POST cho Add to Cart -->
                           <form action="<?= $baseURL ?>cart/add" method="post">
-                            <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                            <input type="hidden" name="source" value="product">
-                            <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="btn btn-default add-to-cart">
-                              <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
-                            </button>
+                              <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                              <input type="hidden" name="quantity" value="1">
+                              <button type="submit" class="btn btn-default add-to-cart">
+                                  <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                              </button>
                           </form>
                         </div>
                         <div class="product-overlay">
                           <div class="overlay-content">
                             <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
                             <p><?= $product['name'] ?></p>
-                            <form action="<?= $baseURL ?>cart/add" method="post">
-                              <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                              <input type="hidden" name="source" value="product">
-                              <input type="hidden" name="quantity" value="1">
-                              <button type="submit" class="btn btn-default add-to-cart">
-                                <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
-                              </button>
+                            <!-- Nếu vẫn muốn overlay thêm -->
+                            <form action="<?= $baseURL .'cart/add' ?>" method="post">
+                                <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                                <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
+                                <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-default add-to-cart">
+                                    <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                                </button>
                             </form>
                           </div>
                         </div>
@@ -387,12 +257,30 @@ $assets = $config['assets'];
             </div>
 
               <ul class="pagination">
-                <li class="active"><a href="">1</a></li>
-                <li><a href="">2</a></li>
-                <li><a href="">3</a></li>
-                <li>
-                  <a href=""><i class="fa fa-angle-double-right"></i></a>
-                </li>
+                <?php
+                // Nút Previous
+                if ($currentPage > 1) {
+                    echo '<li><a href="' . $baseURL . 'product/index?page=' . ($currentPage - 1) . ($category ? '&category=' . $category : '') . ($brand ? '&brand=' . $brand : '') . '"><i class="fa fa-angle-double-left"></i></a></li>';
+                } else {
+                    echo '<li class="disabled"><a href="#"><i class="fa fa-angle-double-left"></i></a></li>';
+                }
+
+                // Tạo các liên kết số trang
+                for ($i = 1; $i <= $totalPages; $i++) {
+                    if ($i == $currentPage) {
+                        echo '<li class="active"><a href="#">' . $i . '</a></li>';
+                    } else {
+                        echo '<li><a href="' . $baseURL . 'product/index?page=' . $i . ($category ? '&category=' . $category : '') . ($brand ? '&brand=' . $brand : '') . '">' . $i . '</a></li>';
+                    }
+                }
+
+                // Nút Next
+                if ($currentPage < $totalPages) {
+                    echo '<li><a href="' . $baseURL . 'product/index?page=' . ($currentPage + 1) . ($category ? '&category=' . $category : '') . ($brand ? '&brand=' . $brand : '') . '"><i class="fa fa-angle-double-right"></i></a></li>';
+                } else {
+                    echo '<li class="disabled"><a href="#"><i class="fa fa-angle-double-right"></i></a></li>';
+                }
+                ?>
               </ul>
             </div>
           </div>
@@ -522,7 +410,7 @@ $assets = $config['assets'];
         }
         if (document.body) {
           var a = document.createElement("iframe");
-          a.height = 1;
+          a.height = 1; 
           a.width = 1;
           a.style.position = "absolute";
           a.style.top = 0;

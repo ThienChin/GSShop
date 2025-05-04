@@ -1,4 +1,8 @@
 <?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 include_once 'Layout/header.php';
 ?>
 
@@ -35,7 +39,7 @@ include_once 'Layout/header.php';
                   </div>
                   <div class="col-sm-6">
                     <img
-                      src="images/products/dell-xps13.jpg"
+                      src="<?= $base ?>assets/images/products/dell-xps13.jpg"
                       class="img-responsive"
                       alt="Laptop Dell XPS 13"
                     />
@@ -55,7 +59,7 @@ include_once 'Layout/header.php';
                   </div>
                   <div class="col-sm-6">
                     <img
-                      src="images/products/asus-rog-pc.jpg"
+                      src="<?= $base ?>assets/images/products/asus-rog-pc.jpg"
                       class="img-responsive"
                       alt="PC Gaming ASUS ROG"
                     />
@@ -75,7 +79,7 @@ include_once 'Layout/header.php';
                   </div>
                   <div class="col-sm-6">
                     <img
-                      src="images/products/logitech-gprox.jpg"
+                      src="<?= $base ?>assets/images/products/logitech-gprox.jpg"
                       class="img-responsive"
                       alt="Tai nghe Logitech G Pro X"
                     />
@@ -241,7 +245,7 @@ include_once 'Layout/header.php';
 
               <div class="shipping text-center">
                 <img
-                  src="images/home/shipping.png"
+                  src="<?= $base ?>assets/images/home/shipping.png"
                   alt="Khuyến mãi GSShop"
                   style="height: 250px; width: 250px"
                 />
@@ -251,19 +255,18 @@ include_once 'Layout/header.php';
 
           <div class="col-sm-9 padding-right">
             <?php
-              // 1. Giới hạn số sản phẩm, ví dụ chỉ lấy 6 cái đầu
+              // Giới hạn số sản phẩm, ví dụ chỉ lấy 6 cái đầu
               $displayProducts = array_slice($featuredProducts, 0, 6);
             ?>
             <div class="features_items">
               <h2 class="title text-center">Sản Phẩm Nổi Bật</h2>
-              <div class="row"><!-- row để Bootstrap xếp ngang -->
-                <!-- Sản Phẩm Nổi Bật -->
+              <div class="row">
                 <?php foreach ($displayProducts as $product): ?>
                   <div class="col-6 col-sm-4 mb-4">
                     <div class="product-image-wrapper">
                       <div class="single-products">
                         <div class="productinfo text-center">
-                          <img class="card-img-top" src="<?= $assets . $product['image'] ?>" alt="<?= $assets . $product['name'] ?>" />
+                          <img class="card-img-top" src="<?= $assets . $product['image'] ?>" alt="<?= htmlspecialchars($product['name']) ?>" />
                           <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
                           <p><?= htmlspecialchars($product['name']) ?></p>
                           <form action="<?= $baseURL ?>cart/addfeatured" method="post">
@@ -278,7 +281,7 @@ include_once 'Layout/header.php';
                         <div class="product-overlay">
                           <div class="overlay-content">
                             <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
-                            <p><?= $product['name'] ?></p>
+                            <p><?= htmlspecialchars($product['name']) ?></p>
                             <form action="<?= $baseURL ?>cart/addfeatured" method="post">
                               <input type="hidden" name="featuredproduct_id" value="<?= $product['id'] ?>">
                               <input type="hidden" name="source" value="featured">
@@ -301,7 +304,6 @@ include_once 'Layout/header.php';
                 <?php endforeach; ?>
               </div>
             </div>
-
           </div>
         </div>
       </div>
