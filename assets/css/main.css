@@ -257,9 +257,7 @@ a#scrollUp i {
   padding-bottom: 10px;
 }
 
-.mainmenu ul li a:hover,
-.mainmenu ul li a.active,
-.shop-menu ul li a.active {
+.mainmenu ul li a:hover {
   color: #ff6200;
 }
 
@@ -309,10 +307,6 @@ ul.sub-menu {
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
   display: none;
   z-index: 999;
-}
-
-.dropdown ul.sub-menu li .active {
-  color: #ff6200;
 }
 
 .navbar-nav li ul.sub-menu li {
@@ -659,11 +653,7 @@ h2.title:after {
   content: "";
   position: absolute;
   border: 1px solid #ddd;
-  bottom: 8px;
-  left: 0;
-  width: 100%;
-  height: 0;
-  z-index: -2;
+  bottom: 8 Redacted
 }
 
 .left-sidebar h2:before {
@@ -2001,4 +1991,20 @@ h2.title {
     font-size: 12px;
     padding: 8px 15px;
   }
+}
+
+/* Quy tắc cho menu điều hướng chính và menu con */
+.nav.navbar-nav li a {
+    color: #333; /* Màu mặc định */
+}
+.nav.navbar-nav li.active a {
+    color: #ff6200 !important; /* Màu cam cho mục active */
+}
+
+/* Quy tắc cho menu con (dropdown) */
+.nav.navbar-nav li ul.sub-menu li a {
+    color: #000; /* Màu mặc định cho menu con */
+}
+.nav.navbar-nav li ul.sub-menu li.active a {
+    color: #ff6200 !important; /* Màu cam cho mục active trong menu con */
 }

@@ -50,7 +50,7 @@ $offset = ($currentPage - 1) * $productsPerPage;
 $productList = array_slice($filteredProducts, $offset, $productsPerPage);
 
 
-include_once './App/Views/Layout/header.php';
+include_once './App/Views/Layout/Homeheader.php';
 
 ?>
 

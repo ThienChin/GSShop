@@ -8,7 +8,7 @@ $base = $config['base'];
 $baseURL = $config['baseURL'];
 $assets = $config['assets'];
 
-include_once './App/Views/Layout/header.php'
+include_once './App/Views/Layout/Homeheader.php'
 ?>
 
     <section id="cart_items">

@@ -1,5 +1,7 @@
 <?php
+
 require_once __DIR__ . '/../../Core/database.php';
+
 class ProductModel
 {
     private $db;
@@ -7,6 +9,21 @@ class ProductModel
     public function __construct()
     {
         $this->db = Database::connect();
+    }
+    
+    public function getPaginatedProducts($limit, $offset)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM products ORDER BY id ASC LIMIT :limit OFFSET :offset");
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function getTotalProducts()
+    {
+        $stmt = $this->db->query("SELECT COUNT(*) FROM products");
+        return $stmt->fetchColumn();
     }
     
     public function getAllProducts()
@@ -32,11 +49,9 @@ class ProductModel
 
     public function deleteProduct($productId)
     {
-        $sql = "DELETE * FROM products
-                WHERE Id = ?";
+        $sql = "DELETE FROM products WHERE id = ?";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$productId]);
-
     }
 
     public function getProductById($id)

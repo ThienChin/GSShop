@@ -3,7 +3,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-include_once 'Layout/header.php';
+include_once 'Layout/Homeheader.php';
 ?>
 
     <section id="slider">

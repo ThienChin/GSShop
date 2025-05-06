@@ -7,6 +7,9 @@ $config = require 'config.php';
 $base = $config['base'];
 $baseURL = $config['baseURL'];
 $assets = $config['assets'];
+
+// Lấy URL hiện tại
+$current_page = basename($_SERVER['REQUEST_URI']);
 ?>
 
 <!DOCTYPE html>
@@ -20,6 +23,7 @@ $assets = $config['assets'];
     />
     <meta name="author" content="GSShop" />
     <title>Trang chủ | GS-Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" />
     <!-- CSS Boostrap -->
     <link href="<?= $base ?>assets/css/bootstrap.min.css" rel="stylesheet" />
     <!-- CSS Core Theme -->
@@ -146,20 +150,32 @@ $assets = $config['assets'];
               </div>
               <div class="mainmenu pull-left">
                 <ul class="nav navbar-nav collapse navbar-collapse">
-                  <li><a href="<?= $baseURL ?>home/index" class="active">Trang chủ</a></li>
-                  <li class="dropdown">
+                  <li class="<?php echo ($current_page == 'index' || $current_page == '') ? 'active' : ''; ?>">
+                    <a href="<?= $baseURL ?>home/index">Trang chủ</a>
+                  </li>
+                  <li class="dropdown <?php echo (strpos($current_page, 'product') !== false || $current_page == 'cart' || $current_page == 'checkout' || $current_page == 'login') ? 'active' : ''; ?>">
                     <a href="#">Sản phẩm<i class="fa fa-angle-down"></i></a>
                     <ul role="menu" class="sub-menu">
-                      <li><a href="<?= $baseURL ?>product/index">Danh sách sản phẩm</a></li>
-                      <li>
-                        <a href="<?= $baseURL ?>product/detail">Chi tiết sản phẩm</a>
-                      </li>
-                      <li><a href="<?= $baseURL ?>order/checkout">Thanh toán</a></li>
-                      <li><a href="<?= $baseURL ?>cart/cart">Giỏ hàng</a></li>
-                      <li><a href="<?= $baseURL ?>user/login">Đăng nhập</a></li>
+                        <li class="<?php echo (strpos($current_page, 'product/index') !== false) ? 'active' : ''; ?>">
+                            <a href="<?= $baseURL ?>product/index">Danh sách sản phẩm</a>
+                        </li>
+                        <li class="<?php echo (strpos($current_page, 'product/detail') !== false) ? 'active' : ''; ?>">
+                            <a href="<?= $baseURL ?>product/detail">Chi tiết sản phẩm</a>
+                        </li>
+                        <li class="<?php echo ($current_page == 'checkout') ? 'active' : ''; ?>">
+                            <a href="<?= $baseURL ?>order/checkout">Thanh toán</a>
+                        </li>
+                        <li class="<?php echo ($current_page == 'cart') ? 'active' : ''; ?>">
+                            <a href="<?= $baseURL ?>cart/cart">Giỏ hàng</a>
+                        </li>
+                        <li class="<?php echo ($current_page == 'login') ? 'active' : ''; ?>">
+                            <a href="<?= $baseURL ?>user/login">Đăng nhập</a>
+                        </li>
                     </ul>
                   </li>
-                  <li><a href="<?= $baseURL ?>user/contact">Liên hệ</a></li>
+                  <li class="<?php echo ($current_page == 'contact') ? 'active' : ''; ?>">
+                    <a href="<?= $baseURL ?>user/contact">Liên hệ</a>
+                  </li>
                 </ul>
               </div>
             </div>
