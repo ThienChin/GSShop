@@ -56,3 +56,44 @@
 </div>
 </body>
 </html>
+
+public function createOrder($userId, $total, $billingInfo, $shippingAddress, $paymentMethod, $notes)
+    {
+        try {
+            error_log("Dữ liệu đầu vào createOrder: user_id=$userId, total=$total, billing_info=$billingInfo, shipping_address=$shippingAddress");
+            $stmt = $this->db->prepare("
+                INSERT INTO orders (user_id, total, billing_info, shipping_address, payment_method, notes, order_date, status)
+                VALUES (:user_id, :total, :billing_info, :shipping_address, :payment_method, :notes, NOW(), :status)
+            ");
+            $stmt->execute([
+                'user_id' => $userId,
+                'total' => $total,
+                'billing_info' => $billingInfo,
+                'shipping_address' => $shippingAddress,
+                'payment_method' => $paymentMethod,
+                'notes' => $notes,
+                'status' => 'pending'
+            ]);
+            $orderId = $this->db->lastInsertId();
+            return $orderId;
+        } catch (PDOException $e) {
+            error_log("Lỗi khi tạo đơn hàng: " . $e->getMessage());
+            var_dump($e->getMessage()); // Tạm thời để xem lỗi
+            return false;
+        }
+    }
+
+    public function beginTransaction()
+    {
+        return $this->db->beginTransaction();
+    }
+
+    public function commit()
+    {
+        return $this->db->commit();
+    }
+
+    public function rollBack()
+    {
+        return $this->db->rollBack();
+    }

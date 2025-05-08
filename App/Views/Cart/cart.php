@@ -8,124 +8,142 @@ $base = $config['base'];
 $baseURL = $config['baseURL'];
 $assets = $config['assets'];
 
-// Khởi tạo $grandTotal mặc định
 $grandTotal = isset($grandTotal) ? $grandTotal : 0;
 
-include_once './App/Views/Layout/header.php'
+include_once './App/Views/Layout/Homeheader.php';
 ?>
 
+<section id="cart_items">
+    <div class="container">
+        <div class="breadcrumbs">
+            <ol class="breadcrumb">
+                <li><a href="<?= $baseURL ?>home/index">Trang chủ</a></li>
+                <li class="active">Giỏ hàng</li>
+            </ol>
+        </div>
 
-    <section id="cart_items">
-        <div class="container">
-            <div class="breadcrumbs">
-                <ol class="breadcrumb">
-                    <li><a href="<?= $baseURL ?>home/index">Trang chủ</a></li>
-                    <li class="active">Giỏ hàng</li>
-                </ol>
+        <!-- Hiển thị thông báo nếu có -->
+        <?php if (isset($_GET['message'])): ?>
+            <div class="alert alert-info text-center">
+                <?php
+                switch ($_GET['message']) {
+                    case 'cart_empty':
+                        echo 'Giỏ hàng của bạn đang trống!';
+                        break;
+                    case 'checkout_failed':
+                        echo 'Thanh toán không thành công, vui lòng thử lại!';
+                        break;
+                    case 'please_login_to_checkout':
+                        echo 'Vui lòng đăng nhập để tiếp tục thanh toán!';
+                        break;
+                }
+                ?>
             </div>
-            <div class="table-responsive cart_info">
-                <?php if (empty($cartItems)): ?>
-                    <div class="alert alert-info text-center">
-                        <h4>Chưa có sản phẩm nào trong giỏ hàng.</h4>
-                        <p>Hãy khám phá cửa hàng của chúng tôi để thêm sản phẩm yêu thích!</p>
-                        <a href="<?= $baseURL ?>home/index" class="btn btn-primary">Tiếp tục mua sắm</a>
-                    </div>
-                <?php else: ?>
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr class="cart_menu">
-                                <td class="image">Sản phẩm</td>
-                                <td class="price">Đơn giá</td>
-                                <td class="quantity">Số lượng</td>
-                                <td class="total">Thành tiền</td>
-                                <td></td>
+        <?php endif; ?>
+
+        <div class="table-responsive cart_info">
+            <?php if (empty($cartItems)): ?>
+                <div class="alert alert-info text-center">
+                    <h4>Chưa có sản phẩm nào trong giỏ hàng.</h4>
+                    <p>Hãy khám phá cửa hàng của chúng tôi để thêm sản phẩm yêu thích!</p>
+                    <a href="<?= $baseURL ?>home/index" class="btn btn-primary">Tiếp tục mua sắm</a>
+                </div>
+            <?php else: ?>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr class="cart_menu">
+                            <td class="image">Sản phẩm</td>
+                            <td class="price">Đơn giá</td>
+                            <td class="quantity">Số lượng</td>
+                            <td class="total">Thành tiền</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-items">
+                        <?php foreach ($cartItems as $item): ?>
+                            <?php
+                            $itemTotal = $item['price'] * $item['quantity'];
+                            $itemId = $item['source'] === 'featured' ? $item['id'] : $item['id'];
+                            ?>
+                            <tr data-id="<?= $itemId ?>" data-source="<?= $item['source'] ?>">
+                                <td class="cart_description">
+                                    <h4><a href="<?= $baseURL ?>product/detail/<?= $itemId ?>"><?= htmlspecialchars($item['name']) ?></a></h4>
+                                </td>
+                                <td class="cart_price">
+                                    <p><?= number_format($item['price'], 0, ',', '.') ?> VNĐ</p>
+                                </td>
+                                <td class="cart_quantity">
+                                    <div class="cart_quantity_button">
+                                        <a class="cart_quantity_up" href="#" onclick="updateQuantity(<?= $itemId ?>, '<?= $item['source'] ?>', 1)"> + </a>
+                                        <input class="cart_quantity_input" type="text" name="quantity" value="<?= $item['quantity'] ?>" autocomplete="off" size="2" readonly>
+                                        <a class="cart_quantity_down" href="#" onclick="updateQuantity(<?= $itemId ?>, '<?= $item['source'] ?>', -1)"> - </a>
+                                    </div>
+                                </td>
+                                <td class="cart_total">
+                                    <p class="cart_total_price"><?= number_format($itemTotal, 0, ',', '.') ?> VNĐ</p>
+                                </td>
+                                <td class="cart_delete">
+                                    <a class="cart_quantity_delete" href="#" onclick="removeItem(<?= $itemId ?>, '<?= $item['source'] ?>')"><i class="fa fa-times"></i></a>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody id="cart-items">
-                            <?php foreach ($cartItems as $item): ?>
-                                <?php
-                                    $itemTotal = $item['price'] * $item['quantity'];
-                                    $itemId = $item['source'] === 'featured' ? $item['id'] : $item['id'];
-                                ?>
-                                <tr data-id="<?= $itemId ?>" data-source="<?= $item['source'] ?>">
-                                    <td class="cart_description">
-                                        <h4><a href="<?= $baseURL ?>product/detail/<?= $itemId ?>"><?= htmlspecialchars($item['name']) ?></a></h4>
-                                    </td>
-                                    <td class="cart_price">
-                                        <p><?= number_format($item['price'], 0, ',', '.') ?> VNĐ</p>
-                                    </td>
-                                    <td class="cart_quantity">
-                                        <div class="cart_quantity_button">
-                                            <a class="cart_quantity_up" href="#" onclick="updateQuantity(<?= $itemId ?>, '<?= $item['source'] ?>', 1)"> + </a>
-                                            <input class="cart_quantity_input" type="text" name="quantity" value="<?= $item['quantity'] ?>" autocomplete="off" size="2" readonly>
-                                            <a class="cart_quantity_down" href="#" onclick="updateQuantity(<?= $itemId ?>, '<?= $item['source'] ?>', -1)"> - </a>
-                                        </div>
-                                    </td>
-                                    <td class="cart_total">
-                                        <p class="cart_total_price"><?= number_format($itemTotal, 0, ',', '.') ?> VNĐ</p>
-                                    </td>
-                                    <td class="cart_delete">
-                                        <a class="cart_quantity_delete" href="#" onclick="removeItem(<?= $itemId ?>, '<?= $item['source'] ?>')"><i class="fa fa-times"></i></a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php endif; ?>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+
+<?php if (!empty($cartItems)): ?>
+    <section id="do_action">
+        <div class="container">
+            <div class="heading">
+                <h3>Bạn muốn làm gì tiếp theo?</h3>
+                <p>Chọn nếu bạn muốn sử dụng mã giảm giá hoặc ước tính chi phí vận chuyển.</p>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="chose_area">
+                        <ul class="user_option">
+                            <li>
+                                <input type="checkbox" id="coupon-checkbox">
+                                <label>Sử dụng mã giảm giá</label>
+                            </li>
+                            <li id="coupon-input" style="display: none;">
+                                <input type="text" placeholder="Nhập mã giảm giá" id="coupon-code">
+                                <button class="btn btn-default" onclick="applyCoupon()">Áp dụng</button>
+                            </li>
+                        </ul>
+                        <ul class="user_info">
+                            <li class="single_field">
+                                <label>Tỉnh/Thành phố:</label>
+                                <select>
+                                    <option>TP. Hồ Chí Minh</option>
+                                    <option>Hà Nội</option>
+                                    <option>Đà Nẵng</option>
+                                    <option>Cần Thơ</option>
+                                </select>
+                            </li>
+                        </ul>
+                        <a class="btn btn-default update" href="#" onclick="estimateShipping()">Ước tính phí vận chuyển</a>
+                        <a class="btn btn-default check_out" href="<?= $baseURL ?>order/checkout">Tiếp tục thanh toán</a>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="total_area">
+                        <ul>
+                            <li>Tổng tiền hàng <span id="subtotal"><?= number_format($grandTotal, 0, ',', '.') ?> VNĐ</span></li>
+                            <li>Phí vận chuyển <span id="shipping">Miễn phí</span></li>
+                            <li>Tổng cộng <span id="total"><?= number_format($grandTotal, 0, ',', '.') ?> VNĐ</span></li>
+                        </ul>
+                        <a class="btn btn-default update" href="#" onclick="updateCart()">Cập nhật</a>
+                        <a class="btn btn-default check_out" href="<?= $baseURL ?>order/checkout">Thanh toán</a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
-
-    <?php if (!empty($cartItems)): ?>
-        <section id="do_action">
-            <div class="container">
-                <div class="heading">
-                    <h3>Bạn muốn làm gì tiếp theo?</h3>
-                    <p>Chọn nếu bạn muốn sử dụng mã giảm giá hoặc ước tính chi phí vận chuyển.</p>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="chose_area">
-                            <ul class="user_option">
-                                <li>
-                                    <input type="checkbox" id="coupon-checkbox">
-                                    <label>Sử dụng mã giảm giá</label>
-                                </li>
-                                <li id="coupon-input" style="display: none;">
-                                    <input type="text" placeholder="Nhập mã giảm giá" id="coupon-code">
-                                    <button class="btn btn-default" onclick="applyCoupon()">Áp dụng</button>
-                                </li>
-                            </ul>
-                            <ul class="user_info">
-                                <li class="single_field">
-                                    <label>Tỉnh/Thành phố:</label>
-                                    <select>
-                                        <option>TP. Hồ Chí Minh</option>
-                                        <option>Hà Nội</option>
-                                        <option>Đà Nẵng</option>
-                                        <option>Cần Thơ</option>
-                                    </select>
-                                </li>
-                            </ul>
-                            <a class="btn btn-default update" href="#" onclick="estimateShipping()">Ước tính phí vận chuyển</a>
-                            <a class="btn btn-default check_out" href="<?= $baseURL ?>order/checkout">Tiếp tục thanh toán</a>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="total_area">
-                            <ul>
-                                <li>Tổng tiền hàng <span id="subtotal"><?= number_format($grandTotal, 0, ',', '.') ?> VNĐ</span></li>
-                                <li>Phí vận chuyển <span id="shipping">Miễn phí</span></li>
-                                <li>Tổng cộng <span id="total"><?= number_format($grandTotal, 0, ',', '.') ?> VNĐ</span></li>
-                            </ul>
-                            <a class="btn btn-default update" href="#" onclick="updateCart()">Cập nhật</a>
-                            <a class="btn btn-default check_out" href="<?= $baseURL ?>order/checkout">Thanh toán</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    <?php endif; ?>
+<?php endif; ?>
 
     <footer id="footer">
         <div class="footer-top">

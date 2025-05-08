@@ -18,12 +18,13 @@ class UserController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $identifier = $_POST['identifier'] ?? '';
             $password = $_POST['password'] ?? '';
+            $redirect = $_POST['redirect'] ?? '';
 
             if (empty($identifier) || empty($password)) {
                 $_SESSION['error'] = 'Vui lòng cung cấp tên đăng nhập/số điện thoại và mật khẩu.';
                 $config = require 'config.php';
                 $baseURL = $config['baseURL'];
-                header('Location: ' . $baseURL . 'user/login');
+                header('Location: ' . $baseURL . 'user/login?redirect=' . urlencode($redirect));
                 exit;
             }
 
@@ -33,16 +34,18 @@ class UserController
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['phone'] = $user['phone'];
                 $_SESSION['fullname'] = $user['fullname'];
-                $_SESSION['username'] = $user['username']; // Thêm username vào session
+                $_SESSION['username'] = $user['username'];
+
                 $config = require 'config.php';
                 $baseURL = $config['baseURL'];
-                header('Location: ' . $baseURL . 'home/index');
+                $redirectUrl = !empty($redirect) ? $redirect : $baseURL . 'home/index';
+                header('Location: ' . $redirectUrl);
                 exit;
             } else {
                 $_SESSION['error'] = 'Tên đăng nhập/số điện thoại hoặc mật khẩu không đúng.';
                 $config = require 'config.php';
                 $baseURL = $config['baseURL'];
-                header('Location: ' . $baseURL . 'user/login');
+                header('Location: ' . $baseURL . 'user/login?redirect=' . urlencode($redirect));
                 exit;
             }
         }
@@ -113,7 +116,7 @@ class UserController
                     $_SESSION['user_id'] = $userId;
                     $_SESSION['phone'] = $phone;
                     $_SESSION['fullname'] = $fullname;
-                    $_SESSION['username'] = $username; // Thêm username vào session
+                    $_SESSION['username'] = $username;
                     $_SESSION['success'] = 'Đăng ký thành công!';
                     $config = require 'config.php';
                     $baseURL = $config['baseURL'];

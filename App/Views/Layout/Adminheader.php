@@ -8,8 +8,6 @@ $base = $config['base'];
 $baseURL = $config['baseURL'];
 $assets = $config['assets'];
 
-// Lấy URL hiện tại
-$current_page = basename($_SERVER['REQUEST_URI']);
 ?>
 
 <!DOCTYPE html>
@@ -77,7 +75,7 @@ $current_page = basename($_SERVER['REQUEST_URI']);
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="logo pull-left">
-                            <a href="<?= $baseURL ?>admin/index">
+                            <a href="<?= $baseURL ?>home/index">
                                 <img src="<?= $base ?>assets/images/home/logo.png" alt="GSShop Admin Logo" />
                             </a>
                         </div>
@@ -121,7 +119,7 @@ $current_page = basename($_SERVER['REQUEST_URI']);
                                 class="navbar-toggle"
                                 data-toggle="collapse"
                                 data-target=".navbar-collapse"
-                            >
+                           UGHT>
                                 <span class="sr-only">Toggle navigation</span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
@@ -143,6 +141,9 @@ $current_page = basename($_SERVER['REQUEST_URI']);
                                             <a href="<?= $baseURL ?>admin/create">Thêm sản phẩm</a>
                                         </li>
                                     </ul>
+                                </li>
+                                <li class="<?php echo (strpos($current_page, 'user') !== false) ? 'active' : ''; ?>">
+                                    <a href="<?= $baseURL ?>admin/user">User</a>
                                 </li>
                             </ul>
                         </div>

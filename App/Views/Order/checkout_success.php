@@ -49,7 +49,7 @@ $assets = $config['assets'];
             padding: 20px;
             border-radius: 8px;
             margin: 20px auto;
-            max-width: 600px;
+            max-width: 800px;
         }
         .order-summary h3 {
             font-size: 20px;
@@ -66,6 +66,16 @@ $assets = $config['assets'];
             display: flex;
             justify-content: space-between;
         }
+        .order-items table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        .order-items th, .order-items td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
         .btn-continue {
             background-color: #fe980f;
             color: #fff;
@@ -80,10 +90,6 @@ $assets = $config['assets'];
             color: #fff;
         }
     </style>
-    <!--[if lt IE 9]>
-    <script src="js/html5shiv.js"></script>
-    <script src="js/respond.min.js"></script>
-    <![endif]-->       
     <link rel="shortcut icon" href="images/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
@@ -99,7 +105,7 @@ $assets = $config['assets'];
                         <div class="contactinfo">
                             <ul class="nav nav-pills">
                                 <li><a href=""><i class="fa fa-phone"></i> +84 123 456 789</a></li>
-                                <li><a href=""><i class="fa fa-envelope"></i> <span class="__cf_email__" data-cfemail="5d1a0e0e35322d1d3a303c3431733e3230">[email protected]</span></a></li>
+                                <li><a href=""><i class="fa fa-envelope"></i> info@gsshop.com</a></li>
                             </ul>
                         </div>
                     </div>
@@ -194,7 +200,34 @@ $assets = $config['assets'];
                                ($order['payment_method'] === 'bank' ? 'Chuyển khoản ngân hàng' : 'Ví MoMo') ?>
                         </span></li>
                         <li><span>Ngày đặt hàng:</span> <span><?= date('d/m/Y H:i', strtotime($order['order_date'])) ?></span></li>
+                        <li><span>Người nhận:</span> <span><?= htmlspecialchars($order['billing_info']['name'] ?? 'N/A') ?></span></li>
+                        <li><span>Email:</span> <span><?= htmlspecialchars($order['billing_info']['email'] ?? 'N/A') ?></span></li>
+                        <li><span>Số điện thoại:</span> <span><?= htmlspecialchars($order['billing_info']['phone'] ?? 'N/A') ?></span></li>
+                        <li><span>Địa chỉ giao hàng:</span> <span><?= htmlspecialchars(($order['shipping_address']['address'] ?? 'N/A') . ', ' . ($order['shipping_address']['city'] ?? 'N/A')) ?></span></li>
                     </ul>
+                    <div class="order-items">
+                        <h3>Chi tiết sản phẩm</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($order['items'] as $item): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($item['product_name'] ?? $item['featured_product_name'] ?? 'N/A') ?></td>
+                                        <td><?= $item['quantity'] ?></td>
+                                        <td><?= number_format($item['price'], 0, ',', '.') ?> VNĐ</td>
+                                        <td><?= number_format($item['price'] * $item['quantity'], 0, ',', '.') ?> VNĐ</td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <a href="<?= $baseURL ?>home/index" class="btn-continue">Tiếp tục mua sắm</a>
@@ -294,7 +327,6 @@ $assets = $config['assets'];
         </div>
     </footer>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script src="<?= $base ?>assets/js/jquery.js"></script>
     <script src="<?= $base ?>assets/js/bootstrap.min.js"></script>
     <script src="<?= $base ?>assets/js/jquery.scrollUp.min.js"></script>

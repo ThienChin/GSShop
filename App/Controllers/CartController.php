@@ -1,16 +1,20 @@
 <?php
-
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 class CartController
 {
-    public function cart()
+    private $productModel;
+
+    public function __construct()
     {
         require_once './App/Model/ProductModel.php';
-        $productModel = new ProductModel();
+        $this->productModel = new ProductModel();
+    }
 
+    public function cart()
+    {
         $cartItems = [];
         $grandTotal = 0;
 
@@ -18,13 +22,13 @@ class CartController
             foreach ($_SESSION['cart'] as $item) {
                 $product = null;
                 if ($item['source'] === 'featured' && isset($item['featuredproduct_id'])) {
-                    $product = $productModel->getFeaturedProductById($item['featuredproduct_id']);
+                    $product = $this->productModel->getFeaturedProductById($item['featuredproduct_id']);
                     if ($product) {
                         $product['source'] = 'featured';
                         $product['id'] = $item['featuredproduct_id'];
                     }
                 } elseif ($item['source'] === 'product' && isset($item['product_id'])) {
-                    $product = $productModel->getProductById($item['product_id']);
+                    $product = $this->productModel->getProductById($item['product_id']);
                     if ($product) {
                         $product['source'] = 'product';
                         $product['id'] = $item['product_id'];
@@ -55,29 +59,45 @@ class CartController
             $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
             $source = isset($_POST['source']) ? $_POST['source'] : 'product';
 
-            if ($productId > 0 && $source === 'product') {
-                if (!isset($_SESSION['cart'])) {
-                    $_SESSION['cart'] = [];
-                }
+            if ($productId <= 0 || $quantity < 1 || $quantity > 100 || !in_array($source, ['product'])) {
+                $_SESSION['error'] = 'Dữ liệu không hợp lệ.';
+                $config = require 'config.php';
+                $baseURL = $config['baseURL'];
+                header('Location: ' . $baseURL . 'cart/cart');
+                exit;
+            }
 
-                $found = false;
-                foreach ($_SESSION['cart'] as &$item) {
-                    if ($item['product_id'] === $productId && $item['source'] === 'product') {
-                        $item['quantity'] += $quantity;
-                        $found = true;
-                        break;
-                    }
-                }
+            $product = $this->productModel->getProductById($productId);
+            if (!$product) {
+                $_SESSION['error'] = 'Sản phẩm không tồn tại.';
+                $config = require 'config.php';
+                $baseURL = $config['baseURL'];
+                header('Location: ' . $baseURL . 'cart/cart');
+                exit;
+            }
 
-                if (!$found) {
-                    $_SESSION['cart'][] = [
-                        'product_id' => $productId,
-                        'source' => 'product',
-                        'quantity' => $quantity
-                    ];
+            if (!isset($_SESSION['cart'])) {
+                $_SESSION['cart'] = [];
+            }
+
+            $found = false;
+            foreach ($_SESSION['cart'] as &$item) {
+                if ($item['product_id'] === $productId && $item['source'] === 'product') {
+                    $item['quantity'] = min($item['quantity'] + $quantity, 100);
+                    $found = true;
+                    break;
                 }
             }
 
+            if (!$found) {
+                $_SESSION['cart'][] = [
+                    'product_id' => $productId,
+                    'source' => 'product',
+                    'quantity' => $quantity
+                ];
+            }
+
+            $_SESSION['success'] = 'Đã thêm sản phẩm vào giỏ hàng.';
             $config = require 'config.php';
             $baseURL = $config['baseURL'];
             header('Location: ' . $baseURL . 'cart/cart');
@@ -92,29 +112,45 @@ class CartController
             $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
             $source = isset($_POST['source']) ? $_POST['source'] : 'featured';
 
-            if ($featuredproductId > 0 && $source === 'featured') {
-                if (!isset($_SESSION['cart'])) {
-                    $_SESSION['cart'] = [];
-                }
+            if ($featuredproductId <= 0 || $quantity < 1 || $quantity > 100 || !in_array($source, ['featured'])) {
+                $_SESSION['error'] = 'Dữ liệu không hợp lệ.';
+                $config = require 'config.php';
+                $baseURL = $config['baseURL'];
+                header('Location: ' . $baseURL . 'cart/cart');
+                exit;
+            }
 
-                $found = false;
-                foreach ($_SESSION['cart'] as &$item) {
-                    if ($item['featuredproduct_id'] === $featuredproductId && $item['source'] === 'featured') {
-                        $item['quantity'] += $quantity;
-                        $found = true;
-                        break;
-                    }
-                }
+            $product = $this->productModel->getFeaturedProductById($featuredproductId);
+            if (!$product) {
+                $_SESSION['error'] = 'Sản phẩm nổi bật không tồn tại.';
+                $config = require 'config.php';
+                $baseURL = $config['baseURL'];
+                header('Location: ' . $baseURL . 'cart/cart');
+                exit;
+            }
 
-                if (!$found) {
-                    $_SESSION['cart'][] = [
-                        'featuredproduct_id' => $featuredproductId,
-                        'source' => 'featured',
-                        'quantity' => $quantity
-                    ];
+            if (!isset($_SESSION['cart'])) {
+                $_SESSION['cart'] = [];
+            }
+
+            $found = false;
+            foreach ($_SESSION['cart'] as &$item) {
+                if ($item['featuredproduct_id'] === $featuredproductId && $item['source'] === 'featured') {
+                    $item['quantity'] = min($item['quantity'] + $quantity, 100);
+                    $found = true;
+                    break;
                 }
             }
 
+            if (!$found) {
+                $_SESSION['cart'][] = [
+                    'featuredproduct_id' => $featuredproductId,
+                    'source' => 'featured',
+                    'quantity' => $quantity
+                ];
+            }
+
+            $_SESSION['success'] = 'Đã thêm sản phẩm nổi bật vào giỏ hàng.';
             $config = require 'config.php';
             $baseURL = $config['baseURL'];
             header('Location: ' . $baseURL . 'cart/cart');
@@ -129,21 +165,28 @@ class CartController
             $source = isset($_POST['source']) ? $_POST['source'] : 'product';
             $change = isset($_POST['change']) ? (int)$_POST['change'] : 0;
 
-            if ($productId > 0 && isset($_SESSION['cart'])) {
-                foreach ($_SESSION['cart'] as $key => &$item) {
-                    if (($item['source'] === 'product' && $item['product_id'] === $productId) ||
-                        ($item['source'] === 'featured' && $item['featuredproduct_id'] === $productId)) {
-                        $newQuantity = $item['quantity'] + $change;
-                        if ($newQuantity < 1) {
-                            unset($_SESSION['cart'][$key]);
-                        } else {
-                            $item['quantity'] = $newQuantity;
-                        }
-                        break;
+            if ($productId <= 0 || !in_array($source, ['product', 'featured']) || !isset($_SESSION['cart'])) {
+                $_SESSION['error'] = 'Dữ liệu không hợp lệ.';
+                $config = require 'config.php';
+                $baseURL = $config['baseURL'];
+                header('Location: ' . $baseURL . 'cart/cart');
+                exit;
+            }
+
+            foreach ($_SESSION['cart'] as $key => &$item) {
+                if (($item['source'] === 'product' && $item['product_id'] === $productId) ||
+                    ($item['source'] === 'featured' && $item['featuredproduct_id'] === $productId)) {
+                    $newQuantity = $item['quantity'] + $change;
+                    if ($newQuantity < 1) {
+                        unset($_SESSION['cart'][$key]);
+                    } else {
+                        $item['quantity'] = min($newQuantity, 100);
                     }
+                    break;
                 }
             }
 
+            $_SESSION['success'] = 'Đã cập nhật giỏ hàng.';
             $config = require 'config.php';
             $baseURL = $config['baseURL'];
             header('Location: ' . $baseURL . 'cart/cart');
@@ -157,18 +200,24 @@ class CartController
             $productId = isset($_POST['product_id']) ? (int)$_POST['product_id'] : 0;
             $source = isset($_POST['source']) ? $_POST['source'] : 'product';
 
-            if ($productId > 0 && isset($_SESSION['cart'])) {
-                foreach ($_SESSION['cart'] as $key => $item) {
-                    if (($item['source'] === 'product' && $item['product_id'] === $productId) ||
-                        ($item['source'] === 'featured' && $item['featuredproduct_id'] === $productId)) {
-                        unset($_SESSION['cart'][$key]);
-                        break;
-                    }
-                }
-                // Đặt lại chỉ số mảng
-                $_SESSION['cart'] = array_values($_SESSION['cart']);
+            if ($productId <= 0 || !in_array($source, ['product', 'featured']) || !isset($_SESSION['cart'])) {
+                $_SESSION['error'] = 'Dữ liệu không hợp lệ.';
+                $config = require 'config.php';
+                $baseURL = $config['baseURL'];
+                header('Location: ' . $baseURL . 'cart/cart');
+                exit;
             }
 
+            foreach ($_SESSION['cart'] as $key => $item) {
+                if (($item['source'] === 'product' && $item['product_id'] === $productId) ||
+                    ($item['source'] === 'featured' && $item['featuredproduct_id'] === $productId)) {
+                    unset($_SESSION['cart'][$key]);
+                    break;
+                }
+            }
+            $_SESSION['cart'] = array_values($_SESSION['cart']);
+
+            $_SESSION['success'] = 'Đã xóa sản phẩm khỏi giỏ hàng.';
             $config = require 'config.php';
             $baseURL = $config['baseURL'];
             header('Location: ' . $baseURL . 'cart/cart');
