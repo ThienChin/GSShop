@@ -1,0 +1,137 @@
+#form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
+.form-container {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.form-tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+.form-tab {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 16px;
+  padding: 10px;
+  cursor: pointer;
+}
+.form-tab.active {
+  color: #000;
+  font-weight: bold;
+  border-bottom: 2px solid #ff0000;
+}
+.social-login {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.social-login a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 14px;
+  color: #333;
+}
+.social-login a img {
+  width: 20px;
+  margin-right: 10px;
+}
+.divider {
+  margin: 20px 0;
+  border-top: 1px solid #ccc;
+  position: relative;
+  text-align: center;
+}
+.divider span {
+  background: #fff;
+  padding: 0 10px;
+  position: relative;
+  top: -10px;
+  color: #666;
+  font-size: 14px;
+}
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 14px;
+}
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+.checkbox-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  font-size: 14px;
+}
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  color: #333;
+}
+.checkbox-label input {
+  margin-right: 10px;
+}
+.forgot-password {
+  color: #0066cc;
+  text-decoration: none;
+  font-size: 20x;
+}
+.btn-login {
+  width: 100%;
+  padding: 10px;
+  background-color: #ff0000;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+.btn-login:hover {
+  background-color: #e60000;
+}
+.signup-link {
+  margin-top: 20px;
+  color: #333;
+  font-size: 14px;
+}
+.signup-link a {
+  color: #0066cc;
+  text-decoration: none;
+}
+.error-message {
+  color: #ff0000;
+  font-size: 12px;
+  margin-top: 5px;
+  display: none;
+  text-align: left;
+}
+.hidden {
+  display: none;
+}
