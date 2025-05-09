@@ -16,7 +16,7 @@
 /* Xóa viền xám dưới footer từ Google Translate */
 body {
   top: 0 !important;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   background: #ffffff; /* Nền trắng */
   position: relative;
   font-weight: 400;
@@ -61,8 +61,13 @@ a:focus {
 }
 
 /* Định dạng tiêu đề */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Roboto', sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Roboto", sans-serif;
   color: #000; /* Tiêu đề đen */
 }
 
@@ -123,7 +128,7 @@ a#scrollUp i {
 .contactinfo ul li a {
   font-size: 12px;
   color: #666; /* Tương phản với nền trắng */
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .contactinfo ul li a:hover {
@@ -153,11 +158,21 @@ a#scrollUp i {
 }
 
 /* Màu nền cho các biểu tượng mạng xã hội khi hover */
-.fa-facebook:hover { background: #1877F2; }
-.fa-twitter:hover { background: #1DA1F2; }
-.fa-linkedin:hover { background: #0A66C2; }
-.fa-dribbble:hover { background: #EA4C89; }
-.fa-google-plus:hover { background: #DB4437; }
+.fa-facebook:hover {
+  background: #1877f2;
+}
+.fa-twitter:hover {
+  background: #1da1f2;
+}
+.fa-linkedin:hover {
+  background: #0a66c2;
+}
+.fa-dribbble:hover {
+  background: #ea4c89;
+}
+.fa-google-plus:hover {
+  background: #db4437;
+}
 
 /* Phần giữa đầu trang */
 .header-middle .container .row {
@@ -228,7 +243,8 @@ a#scrollUp i {
   margin-right: 3px;
 }
 
-.shop-menu ul li a:hover {
+.shop-menu ul li a:hover,
+.shop-menu ul li a.active {
   color: #ff6200;
 }
 
@@ -258,8 +274,7 @@ a#scrollUp i {
 }
 
 .mainmenu ul li a:hover,
-.mainmenu ul li a.active,
-.shop-menu ul li a.active {
+.mainmenu ul li a.active {
   color: #ff6200;
 }
 
@@ -335,20 +350,60 @@ ul.sub-menu {
   padding-left: 5px;
 }
 
+/* Quy tắc cho menu điều hướng chính và menu con */
+.nav.navbar-nav li a {
+  color: #333; /* Màu mặc định */
+}
+
+.nav.navbar-nav li.active a {
+  color: #ff6200 !important; /* Màu cam cho mục active */
+}
+
+/* Quy tắc cho menu con (dropdown) */
+.nav.navbar-nav li ul.sub-menu li a {
+  color: #000; /* Màu mặc định cho menu con */
+}
+
+.nav.navbar-nav li ul.sub-menu li.active a {
+  color: #ff6200 !important; /* Màu cam cho mục active trong menu con */
+}
+
 /* Hiệu ứng fadeInUp */
 @-webkit-keyframes fadeInUp {
-  0% { opacity: 0; -webkit-transform: translateY(20px); transform: translateY(20px); }
-  100% { opacity: 1; -webkit-transform: translateY(0); transform: translateY(0); }
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(20px);
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
 }
 
 @-moz-keyframes fadeInUp {
-  0% { opacity: 0; -moz-transform: translateY(20px); transform: translateY(20px); }
-  100% { opacity: 1; -moz-transform: translateY(0); transform: translateY(0); }
+  0% {
+    opacity: 0;
+    -moz-transform: translateY(20px);
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    -moz-transform: translateY(0);
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeInUp {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /*************************
@@ -373,7 +428,7 @@ ul.sub-menu {
 
 .companyinfo h2 {
   color: #666;
-  font-family: 'Abel', sans-serif;
+  font-family: "Abel", sans-serif;
   font-size: 27px;
   text-transform: uppercase;
 }
@@ -583,7 +638,7 @@ ul.sub-menu {
 
 .item h1 {
   color: #666;
-  font-family: 'Abel', sans-serif;
+  font-family: "Abel", sans-serif;
   font-size: 48px;
   margin-top: 115px;
 }
