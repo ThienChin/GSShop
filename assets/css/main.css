@@ -988,6 +988,40 @@ h2.title {
   background: #e55a00;
 }
 
+.recommended-products {
+  margin-top: 20px;
+}
+
+.recommended-products-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%; /* Đảm bảo chiều rộng bằng container */
+}
+
+.recommended-product {
+  text-align: center;
+  flex: 1 1 calc(33.33% - 13.33px); /* Phân phối đều 3 ô, trừ khoảng cách gap */
+  border: 1px solid #ddd;
+  padding: 10px;
+  box-sizing: border-box; /* Đảm bảo padding không làm tăng kích thước */
+}
+
+.recommended-product img {
+  max-width: 100%;
+  height: auto;
+}
+
+.recommended-product a {
+  text-decoration: none;
+  color: #000;
+}
+
+.recommended-product a:hover h4 {
+  color: #ff6200;
+}
+
 /* Đối tác */
 .our_partners ul {
   background: #f5f5f5;
@@ -1981,6 +2015,15 @@ h2.title {
   .companyinfo,
   .video-gallery {
     margin-top: 20px;
+  }
+
+  .recommended-products-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .recommended-product {
+    max-width: 100%;
   }
 }
 

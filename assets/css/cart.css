@@ -1,0 +1,273 @@
+.cart_info {
+    margin-bottom: 30px;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.alert-info {
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px;
+    text-align: center;
+}
+
+.alert-info h4 {
+    color: #333;
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.alert-info p {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.alert-info .btn-primary {
+    background: #ff6200;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.alert-info .btn-primary:hover {
+    background: #e55a00;
+}
+
+.cart_menu {
+    background: #ff6200;
+    color: #fff;
+    font-weight: 500;
+}
+
+.cart_info table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.cart_info th, .cart_info td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.cart_info th {
+    background: #f5f5f5;
+    color: #333;
+    font-weight: 600;
+}
+
+.cart_description h4 a {
+    color: #333;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.cart_description h4 a:hover {
+    color: #ff6200;
+}
+
+.cart_price p {
+    color: #666;
+    font-size: 16px;
+}
+
+.cart_quantity_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.cart_quantity_button a {
+    background: #f5f5f5;
+    color: #333;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.cart_quantity_button a:hover {
+    background: #ff6200;
+    color: #fff;
+}
+
+.cart_quantity_input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    background: #fff;
+    color: #333;
+}
+
+.cart_total_price {
+    color: #ff6200;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.cart_delete a {
+    background: #f5f5f5;
+    color: #666;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.cart_delete a:hover {
+    background: #ff6200;
+    color: #fff;
+}
+
+#do_action {
+    background: #f9f9f9;
+    padding: 30px 0;
+    border-radius: 8px;
+}
+
+.heading {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.heading h3 {
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.heading p {
+    color: #666;
+    font-size: 16px;
+}
+
+#do_action .row {
+    display: flex;
+    gap: 30px;
+}
+
+#do_action .col-sm-6 {
+    flex: 1;
+}
+
+.chose_area, .total_area {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.user_option li {
+    margin-bottom: 15px;
+}
+
+.user_option label {
+    font-size: 16px;
+    color: #333;
+    margin-left: 5px;
+}
+
+#coupon-input {
+    display: flex;
+    gap: 10px;
+}
+
+#coupon-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+#coupon-input button {
+    background: #ff6200;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+#coupon-input button:hover {
+    background: #e55a00;
+}
+
+.user_info li {
+    margin-bottom: 15px;
+}
+
+.user_info label {
+    font-size: 16px;
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.user_info select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.total_area ul li {
+    background: #f5f5f5;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    color: #333;
+}
+
+.total_area span {
+    color: #ff6200;
+    font-weight: 600;
+}
+
+.btn-default.update, .btn-default.check_out {
+    background: #ff6200;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    margin-right: 10px;
+    transition: background 0.3s ease;
+}
+
+.btn-default.update:hover, .btn-default.check_out:hover {
+    background: #e55a00;
+}
+
+@media (max-width: 767px) {
+    #do_action .row {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .cart_info th, .cart_info td {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .cart_quantity_button a {
+        padding: 3px 8px;
+    }
+
+    .cart_quantity_input {
+        width: 40px;
+    }
+}

@@ -1,5 +1,9 @@
 <?php
-include_once 'Layout/header.php';
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+include_once 'Layout/Homeheader.php';
 ?>
 
     <section id="slider">
@@ -35,7 +39,7 @@ include_once 'Layout/header.php';
                   </div>
                   <div class="col-sm-6">
                     <img
-                      src="images/products/dell-xps13.jpg"
+                      src="<?= $base ?>assets/images/products/dell-xps13.jpg"
                       class="img-responsive"
                       alt="Laptop Dell XPS 13"
                     />
@@ -55,7 +59,7 @@ include_once 'Layout/header.php';
                   </div>
                   <div class="col-sm-6">
                     <img
-                      src="images/products/asus-rog-pc.jpg"
+                      src="<?= $base ?>assets/images/products/asus-rog-pc.jpg"
                       class="img-responsive"
                       alt="PC Gaming ASUS ROG"
                     />
@@ -75,7 +79,7 @@ include_once 'Layout/header.php';
                   </div>
                   <div class="col-sm-6">
                     <img
-                      src="images/products/logitech-gprox.jpg"
+                      src="<?= $base ?>assets/images/products/logitech-gprox.jpg"
                       class="img-responsive"
                       alt="Tai nghe Logitech G Pro X"
                     />
@@ -137,9 +141,9 @@ include_once 'Layout/header.php';
                   <div id="laptops" class="panel-collapse collapse">
                     <div class="panel-body">
                       <ul>
-                        <li><a href="">Laptop Gaming</a></li>
-                        <li><a href="">Laptop Văn phòng</a></li>
-                        <li><a href="">Ultrabook</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=laptop_gaming">Laptop Gaming</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=laptop_van_phong">Laptop Văn phòng</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=ultrabook">Ultrabook</a></li>
                       </ul>
                     </div>
                   </div>
@@ -162,9 +166,9 @@ include_once 'Layout/header.php';
                   <div id="pcs" class="panel-collapse collapse">
                     <div class="panel-body">
                       <ul>
-                        <li><a href="">PC Gaming</a></li>
-                        <li><a href="">PC Đồ họa</a></li>
-                        <li><a href="">PC Văn phòng</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=pc_gaming">PC Gaming</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=pc_do_hoa">PC Đồ họa</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=pc_van_phong">PC Văn phòng</a></li>
                       </ul>
                     </div>
                   </div>
@@ -187,10 +191,10 @@ include_once 'Layout/header.php';
                   <div id="accessories" class="panel-collapse collapse">
                     <div class="panel-body">
                       <ul>
-                        <li><a href="">Tai nghe</a></li>
-                        <li><a href="">Bàn phím</a></li>
-                        <li><a href="">Chuột</a></li>
-                        <li><a href="">Màn hình</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=tai_nghe">Tai nghe</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=ban_phim">Bàn phím</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=chuot">Chuột</a></li>
+                        <li><a href="<?= $baseURL ?>product/index?category=man_hinh">Màn hình</a></li>
                       </ul>
                     </div>
                   </div>
@@ -202,46 +206,27 @@ include_once 'Layout/header.php';
                 <div class="brands-name">
                   <ul class="nav nav-pills nav-stacked">
                     <li>
-                      <a href=""> <span class="pull-right">(50)</span>Dell</a>
+                      <a href="<?= $baseURL ?>product/index?brand=Dell"><span class="pull-right"></span>Dell</a>
                     </li>
                     <li>
-                      <a href=""> <span class="pull-right">(30)</span>HP</a>
+                      <a href="<?= $baseURL ?>product/index?brand=HP"><span class="pull-right"></span>HP</a>
                     </li>
                     <li>
-                      <a href=""> <span class="pull-right">(20)</span>ASUS</a>
+                      <a href="<?= $baseURL ?>product/index?brand=ASUS"><span class="pull-right"></span>ASUS</a>
                     </li>
                     <li>
-                      <a href="">
-                        <span class="pull-right">(15)</span>Logitech</a
-                      >
+                      <a href="<?= $baseURL ?>product/index?brand=Logitech"><span class="pull-right"></span>Logitech</a>
                     </li>
                     <li>
-                      <a href=""> <span class="pull-right">(10)</span>Lenovo</a>
+                      <a href="<?= $baseURL ?>product/index?brand=Lenovo"><span class="pull-right"></span>Lenovo</a>
                     </li>
                   </ul>
                 </div>
               </div>
 
-              <div class="price-range">
-                <h2>Khoảng giá</h2>
-                <div class="well">
-                  <input
-                    type="text"
-                    class="span2"
-                    value=""
-                    data-slider-min="0"
-                    data-slider-max="100"
-                    data-slider-step="5"
-                    data-slider-value="[10,80]"
-                    id="sl2"
-                  /><br />
-                  <b>0 triệu</b> <b class="pull-right">100 triệu</b>
-                </div>
-              </div>
-
               <div class="shipping text-center">
                 <img
-                  src="images/home/shipping.png"
+                  src="<?= $base ?>assets/images/home/shipping.png"
                   alt="Khuyến mãi GSShop"
                   style="height: 250px; width: 250px"
                 />
@@ -250,218 +235,54 @@ include_once 'Layout/header.php';
           </div>
 
           <div class="col-sm-9 padding-right">
-          <div class="features_items">
+            <?php
+              // Giới hạn số sản phẩm, ví dụ chỉ lấy 6 cái đầu
+              $displayProducts = array_slice($featuredProducts, 0, 6);
+            ?>
+            <div class="features_items">
               <h2 class="title text-center">Sản Phẩm Nổi Bật</h2>
-              <div class="col-sm-4">
-                <div class="product-image-wrapper">
-                  <div class="single-products">
-                    <div class="productinfo text-center">
-                      <img
-                        src="images/products/dell-xps13.jpg"
-                        alt="Laptop Dell XPS 13"
-                      />
-                      <h2>25,000,000 VNĐ</h2>
-                      <p>Laptop Dell XPS 13</p>
-                      <a href="cart.html" class="btn btn-default add-to-cart"
-                        ><i class="fa fa-shopping-cart"></i>Thêm vào giỏ hàng</a
-                      >
-                    </div>
-                    <div class="product-overlay">
-                      <div class="overlay-content">
-                        <h2>25,000,000 VNĐ</h2>
-                        <p>Laptop Dell XPS 13</p>
-                        <a href="cart.html" class="btn btn-default add-to-cart"
-                          ><i class="fa fa-shopping-cart"></i>Thêm vào giỏ
-                          hàng</a
-                        >
-                      </div>
-                    </div>
-                  </div>
-                  <div class="choose">
-                    <ul class="nav nav-pills nav-justified">
-                      <li>
-                        <a href="#"
-                          ><i class="fa fa-plus-square"></i>Yêu thích</a
-                        >
-                      </li>
-                      <li>
-                        <a href="product-details.html"
-                          ><i class="fa fa-plus-square"></i>Xem chi tiết</a
-                        >
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-4">
-                <div class="product-image-wrapper">
-                  <div class="single-products">
-                    <div class="productinfo text-center">
-                      <img
-                        src="images/products/asus-rog-pc.jpg"
-                        alt="PC Gaming ASUS ROG"
-                      />
-                      <h2>35,000,000 VNĐ</h2>
-                      <p>PC Gaming ASUS ROG</p>
-                      <a href="cart.html" class="btn btn-default add-to-cart"
-                        ><i class="fa fa-shopping-cart"></i>Thêm vào giỏ hàng</a
-                      >
-                    </div>
-                    <div class="product-overlay">
-                      <div class="overlay-content">
-                        <h2>35,000,000 VNĐ</h2>
-                        <p>PC Gaming ASUS ROG</p>
-                        <a href="cart.html" class="btn btn-default add-to-cart"
-                          ><i class="fa fa-shopping-cart"></i>Thêm vào giỏ
-                          hàng</a
-                        >
-                      </div>
-                    </div>
-                  </div>
-                  <div class="choose">
-                    <ul class="nav nav-pills nav-justified">
-                      <li>
-                        <a href="#"
-                          ><i class="fa fa-plus-square"></i>Yêu thích</a
-                        >
-                      </li>
-                      <li>
-                        <a href="product-details.html"
-                          ><i class="fa fa-plus-square"></i>Xem chi tiết</a
-                        >
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-4">
-                <div class="product-image-wrapper">
-                  <div class="single-products">
-                    <div class="productinfo text-center">
-                      <img
-                        src="images/products/logitech-gprox.jpg"
-                        alt="Tai nghe Logitech G Pro X"
-                      />
-                      <h2>3,500,000 VNĐ</h2>
-                      <p>Tai nghe Logitech G Pro X</p>
-                      <a href="cart.html" class="btn btn-default add-to-cart"
-                        ><i class="fa fa-shopping-cart"></i>Thêm vào giỏ hàng</a
-                      >
-                    </div>
-                    <div class="product-overlay">
-                      <div class="overlay-content">
-                        <h2>3,500,000 VNĐ</h2>
-                        <p>Tai nghe Logitech G Pro X</p>
-                        <a href="cart.html" class="btn btn-default add-to-cart"
-                          ><i class="fa fa-shopping-cart"></i>Thêm vào giỏ
-                          hàng</a
-                        >
-                      </div>
-                    </div>
-                  </div>
-                  <div class="choose">
-                    <ul class="nav nav-pills nav-justified">
-                      <li>
-                        <a href="#"
-                          ><i class="fa fa-plus-square"></i>Yêu thích</a
-                        >
-                      </li>
-                      <li>
-                        <a href="product-details.html"
-                          ><i class="fa fa-plus-square"></i>Xem chi tiết</a
-                        >
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="recommended_items">
-              <h2 class="title text-center">Sản Phẩm Đề Xuất</h2>
-              <div
-                id="recommended-item-carousel"
-                class="carousel slide"
-                data-ride="carousel"
-              >
-                <div class="carousel-inner">
-                  <div class="item active">
-                    <div class="col-sm-4">
-                      <div class="product-image-wrapper">
-                        <div class="single-products">
-                          <div class="productinfo text-center">
-                            <img
-                              src="images/products/dell-xps13.jpg"
-                              alt="Laptop Dell XPS 13"
-                            />
-                            <h2>25,000,000 VNĐ</h2>
-                            <p>Laptop Dell XPS 13</p>
-                            <a
-                              href="cart.html"
-                              class="btn btn-default add-to-cart"
-                              ><i class="fa fa-shopping-cart"></i>Thêm vào giỏ
-                              hàng</a
-                            >
+              <div class="row">
+                <?php foreach ($displayProducts as $product): ?>
+                  <div class="col-6 col-sm-4 mb-4">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img class="card-img-top" src="<?= $assets . $product['image'] ?>" alt="<?= htmlspecialchars($product['name']) ?>" />
+                          <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
+                          <p><?= htmlspecialchars($product['name']) ?></p>
+                          <form action="<?= $baseURL ?>cart/addfeatured" method="post">
+                            <input type="hidden" name="featuredproduct_id" value="<?= $product['id'] ?>">
+                            <input type="hidden" name="source" value="featured">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn btn-default add-to-cart">
+                              <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                            </button>
+                          </form>
+                        </div>
+                        <div class="product-overlay">
+                          <div class="overlay-content">
+                            <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
+                            <p><?= htmlspecialchars($product['name']) ?></p>
+                            <form action="<?= $baseURL ?>cart/addfeatured" method="post">
+                              <input type="hidden" name="featuredproduct_id" value="<?= $product['id'] ?>">
+                              <input type="hidden" name="source" value="featured">
+                              <input type="hidden" name="quantity" value="1">
+                              <button type="submit" class="btn btn-default add-to-cart">
+                                <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                              </button>
+                            </form>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="col-sm-4">
-                      <div class="product-image-wrapper">
-                        <div class="single-products">
-                          <div class="productinfo text-center">
-                            <img
-                              src="images/products/asus-rog-pc.jpg"
-                              alt="PC Gaming ASUS ROG"
-                            />
-                            <h2>35,000,000 VNĐ</h2>
-                            <p>PC Gaming ASUS ROG</p>
-                            <a
-                              href="cart.html"
-                              class="btn btn-default add-to-cart"
-                              ><i class="fa fa-shopping-cart"></i>Thêm vào giỏ
-                              hàng</a
-                            >
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-sm-4">
-                      <div class="product-image-wrapper">
-                        <div class="single-products">
-                          <div class="productinfo text-center">
-                            <img
-                              src="images/products/logitech-gprox.jpg"
-                              alt="Tai nghe Logitech G Pro X"
-                            />
-                            <h2>3,500,000 VNĐ</h2>
-                            <p>Tai nghe Logitech G Pro X</p>
-                            <a
-                              href="cart.html"
-                              class="btn btn-default add-to-cart"
-                              ><i class="fa fa-shopping-cart"></i>Thêm vào giỏ
-                              hàng</a
-                            >
-                          </div>
-                        </div>
+                      <div class="choose">
+                        <ul class="nav nav-pills nav-justified">
+                          <li><a href="#"><i class="fa fa-plus-square"></i> Yêu thích</a></li>
+                          <li><a href="<?= $baseURL ?>product/detail/<?= $product['id'] ?>"><i class="fa fa-plus-square"></i> Xem chi tiết</a></li>
+                        </ul>
                       </div>
                     </div>
                   </div>
-                </div>
-                <a
-                  class="left recommended-item-control"
-                  href="#recommended-item-carousel"
-                  data-slide="prev"
-                >
-                  <i class="fa fa-angle-left"></i>
-                </a>
-                <a
-                  class="right recommended-item-control"
-                  href="#recommended-item-carousel"
-                  data-slide="next"
-                >
-                  <i class="fa fa-angle-right"></i>
-                </a>
+                <?php endforeach; ?>
               </div>
             </div>
           </div>

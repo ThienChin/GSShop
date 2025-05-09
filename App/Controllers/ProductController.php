@@ -6,6 +6,11 @@ class ProductController
     {
         $product = new ProductModel();
         $productList = $product->getAllProducts();
-        include __DIR__ . '/../Views/Product/product-detail.php';
+        include_once __DIR__ . '/../Views/Product/DanhSachSanPham.php';
+    }
+
+    public function detail()
+    {
+        include_once __DIR__ . '/../Views/Product/ChiTietSanPham.php';
     }
 }

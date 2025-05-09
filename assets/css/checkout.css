@@ -1,0 +1,182 @@
+.checkout-options {
+    margin-bottom: 30px;
+}
+
+.checkout-options h3 {
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.checkout-options p {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.checkout-options .nav {
+    display: flex;
+    gap: 20px;
+}
+
+.checkout-options .nav li {
+    margin: 0;
+}
+
+.checkout-options .nav li label {
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+}
+
+.checkout-options .nav li a {
+    color: #ff6200;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.checkout-options .nav li a:hover {
+    text-decoration: underline;
+}
+
+.shopper-informations {
+    background: #f9f9f9;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.shopper-informations .row {
+    display: flex;
+    gap: 30px;
+}
+
+.shopper-informations .col-sm-4 {
+    flex: 1;
+}
+
+.shopper-info, .bill-to, .order-message {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.shopper-info p, .bill-to p, .order-message p {
+    color: #333;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.shopper-info input, .bill-to input, .bill-to select, .order-message textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.shopper-info input:focus, .bill-to input:focus, .bill-to select:focus, .order-message textarea:focus {
+    border-color: #ff6200;
+    outline: none;
+    box-shadow: 0 0 5px rgba(255, 98, 0, 0.3);
+}
+
+.order-message textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+.order-message label {
+    font-size: 14px;
+    color: #666;
+}
+
+.btn-primary {
+    background: #ff6200;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #e55a00;
+}
+
+.review-payment h2 {
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.cart_info {
+    margin-top: 20px;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.cart_menu {
+    background: #ff6200;
+    color: #fff;
+    font-weight: 500;
+}
+
+.cart_info table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.cart_info th, .cart_info td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.cart_info th {
+    background: #f5f5f5;
+}
+
+.cart_total_price {
+    color: #ff6200;
+    font-weight: 600;
+}
+
+.payment-options {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.payment-options h3 {
+    color: #333;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.payment-options span {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.payment-options label {
+    font-size: 16px;
+    color: #333;
+    margin-left: 5px;
+}
+
+.payment-options .btn-primary {
+    margin-top: 20px;
+}

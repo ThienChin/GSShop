@@ -6,7 +6,7 @@ class HomeController
     public function index()
     {
         $product = new ProductModel();
-        $productList = $product->getAllProducts();
+        $featuredProducts = $product->getFeaturedProducts(); // Sản phẩm nổi bật
         include_once 'App/Views/Home.php';
     }
 }
