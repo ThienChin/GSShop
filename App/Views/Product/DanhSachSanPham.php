@@ -8,6 +8,23 @@ $base = $config['base'];
 $baseURL = $config['baseURL'];
 $assets = $config['assets'];
 
+// Kết nối cơ sở dữ liệu
+try {
+    $db = new PDO(
+        "mysql:host={$config['db']['host']};dbname={$config['db']['name']}",
+        $config['db']['username'],
+        $config['db']['password']
+    );
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Kết nối cơ sở dữ liệu thất bại: " . $e->getMessage());
+}
+
+// Lấy danh sách sản phẩm từ bảng products
+$query = "SELECT id, name, category, price, image FROM products";
+$productList = $db->query($query)->fetchAll();
+
 // Số sản phẩm mỗi trang
 $productsPerPage = 9;
 
@@ -21,18 +38,31 @@ $category = isset($_GET['category']) ? $_GET['category'] : null;
 // Lấy thương hiệu từ URL (nếu có), mặc định là null
 $brand = isset($_GET['brand']) ? $_GET['brand'] : null;
 
-// Lọc sản phẩm theo danh mục nếu có
+// Lấy khoảng giá từ URL (nếu có), mặc định là null
+$minPrice = isset($_GET['min_price']) ? (float)$_GET['min_price'] * 1000000 : null;
+$maxPrice = isset($_GET['max_price']) ? (float)$_GET['max_price'] * 1000000 : null;
+
+// Lọc sản phẩm
 $filteredProducts = $productList;
+
+// Lọc theo danh mục nếu có
 if ($category) {
     $filteredProducts = array_filter($filteredProducts, function($product) use ($category) {
         return isset($product['category']) && $product['category'] === $category;
     });
 }
 
-// Lọc sản phẩm theo thương hiệu nếu có
+// Lọc theo thương hiệu nếu có
 if ($brand) {
     $filteredProducts = array_filter($filteredProducts, function($product) use ($brand) {
         return stripos($product['name'], $brand) !== false;
+    });
+}
+
+// Lọc theo khoảng giá nếu có
+if ($minPrice !== null && $maxPrice !== null) {
+    $filteredProducts = array_filter($filteredProducts, function($product) use ($minPrice, $maxPrice) {
+        return $product['price'] >= $minPrice && $product['price'] <= $maxPrice;
     });
 }
 
@@ -41,7 +71,11 @@ $totalProducts = count($filteredProducts); // Số lượng sản phẩm sau khi
 $totalPages = ceil($totalProducts / $productsPerPage);
 
 // Đảm bảo trang hiện tại không vượt quá số trang tối đa
-if ($currentPage > $totalPages) $currentPage = $totalPages;
+if ($currentPage > $totalPages && $totalPages > 0) {
+    $currentPage = $totalPages;
+} elseif ($totalPages === 0) {
+    $currentPage = 1;
+}
 
 // Tính offset để lấy đúng sản phẩm cho trang hiện tại
 $offset = ($currentPage - 1) * $productsPerPage;
@@ -49,15 +83,13 @@ $offset = ($currentPage - 1) * $productsPerPage;
 // Lấy danh sách sản phẩm cho trang hiện tại
 $productList = array_slice($filteredProducts, $offset, $productsPerPage);
 
-
 include_once './App/Views/Layout/Homeheader.php';
-
 ?>
 
     <section id="advertisement">
       <div class="container" style="text-align: center">
         <img
-          src="images/home/shipping.jpg"
+          src="<?= $base ?>assets/images/home/shipping.png"
           alt="Khuyến mãi GSShop"
           style="height: 150px; width: 620px"
         />
@@ -175,25 +207,50 @@ include_once './App/Views/Layout/Homeheader.php';
               </div>
 
               <div class="price-range">
-                <h2>Khoảng giá</h2>
-                <div class="well">
-                  <input
-                    type="text"
-                    class="span2"
-                    value=""
-                    data-slider-min="0"
-                    data-slider-max="100"
-                    data-slider-step="5"
-                    data-slider-value="[10,80]"
-                    id="sl2"
-                  /><br />
-                  <b>0 triệu</b> <b class="pull-right">100 triệu</b>
-                </div>
-              </div>
+    <h2>Khoảng giá</h2>
+    <div class="well">
+        <!-- Slider input -->
+        <input
+            type="text"
+            class="span2"
+            value=""
+            data-slider-min="0"
+            data-slider-max="100"
+            data-slider-step="5"
+            data-slider-value="[<?= isset($_GET['min_price']) ? (float)$_GET['min_price'] : 10 ?>,<?= isset($_GET['max_price']) ? (float)$_GET['max_price'] : 80 ?>]"
+            id="sl2"
+        />
+        
+        <!-- Hiển thị giá trị -->
+        <div class="price-values" style="margin-top: 10px;">
+            <span id="price-min"><?= isset($_GET['min_price']) ? (float)$_GET['min_price'] : 10 ?> triệu</span>
+            <span id="price-max" class="pull-right"><?= isset($_GET['max_price']) ? (float)$_GET['max_price'] : 80 ?> triệu</span>
+        </div>
+        
+        <!-- Form filter -->
+        <form id="price-filter-form" action="<?= $baseURL ?>product/index" method="get">
+            <input type="hidden" name="min_price" id="min-price-input" value="<?= isset($_GET['min_price']) ? htmlspecialchars($_GET['min_price']) : 10 ?>">
+            <input type="hidden" name="max_price" id="max-price-input" value="<?= isset($_GET['max_price']) ? htmlspecialchars($_GET['max_price']) : 80 ?>">
+            
+            <?php 
+            $preserveParams = ['category', 'brand', 'page'];
+            foreach ($preserveParams as $param) {
+                if (isset($_GET[$param])) {
+                    echo '<input type="hidden" name="'.htmlspecialchars($param).'" value="'.htmlspecialchars($_GET[$param]).'">';
+                }
+            }
+            ?>
+            
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top: 15px;">
+                <i class="fa fa-search"></i> Lọc theo giá
+            </button>
+        </form>
+    </div>
+</div>
 
               <div class="shipping text-center">
                 <img
-                  src="images/home/shipping.png"
+                  src="<?= $base ?>assets/images/home/shipping.png"
                   alt="Khuyến mãi GSShop"
                   style="height: 250px; width: 250px"
                 />
@@ -202,87 +259,104 @@ include_once './App/Views/Layout/Homeheader.php';
           </div>
 
           <div class="col-sm-9 padding-right">
-          <div class="features_items">
+            <div class="features_items">
               <h2 class="title text-center">Sản Phẩm Nổi Bật</h2>
-              <div class="row"><!-- row để Bootstrap xếp ngang -->
-                <?php foreach ($productList as $product): ?>
-                  <div class="col-6 col-sm-4 mb-4"><!-- mỗi sản phẩm 1 cột -->
-                    <div class="product-image-wrapper">
-                      <div class="single-products">
-                        <div class="productinfo text-center">
-                          <img
-                            class="card-img-top"
-                            src="<?= $assets. $product['image'] ?>"
-                            alt="<?= $assets. $product['name'] ?>"
-                          />
-                          <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
-                          <p><?= htmlspecialchars($product['name']) ?></p>
-
-                          <!-- 2. Dùng form POST cho Add to Cart -->
-                          <form action="<?= $baseURL ?>cart/add" method="post">
-                              <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                              <input type="hidden" name="quantity" value="1">
-                              <button type="submit" class="btn btn-default add-to-cart">
-                                  <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
-                              </button>
-                          </form>
-                        </div>
-                        <div class="product-overlay">
-                          <div class="overlay-content">
+              <?php if (empty($productList)): ?>
+                <p class="text-center">Không tìm thấy sản phẩm nào phù hợp.</p>
+              <?php else: ?>
+                <div class="row">
+                  <?php foreach ($productList as $product): ?>
+                    <div class="col-6 col-sm-4 mb-4">
+                      <div class="product-image-wrapper">
+                        <div class="single-products">
+                          <div class="productinfo text-center">
+                            <img
+                              class="card-img-top"
+                              src="<?= $assets . $product['image'] ?>"
+                              alt="<?= htmlspecialchars($product['name']) ?>"
+                            />
                             <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
-                            <p><?= $product['name'] ?></p>
-                            <!-- Nếu vẫn muốn overlay thêm -->
-                            <form action="<?= $baseURL .'cart/add' ?>" method="post">
+                            <p><?= htmlspecialchars($product['name']) ?></p>
+                            <form action="<?= $baseURL ?>cart/add" method="post">
                                 <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                                <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
-                                <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
                                 <input type="hidden" name="quantity" value="1">
                                 <button type="submit" class="btn btn-default add-to-cart">
                                     <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
                                 </button>
                             </form>
                           </div>
+                          <div class="product-overlay">
+                            <div class="overlay-content">
+                              <h2><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</h2>
+                              <p><?= htmlspecialchars($product['name']) ?></p>
+                              <form action="<?= $baseURL ?>cart/add" method="post">
+                                  <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                                  <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
+                                  <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
+                                  <input type="hidden" name="quantity" value="1">
+                                  <button type="submit" class="btn btn-default add-to-cart">
+                                      <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                                  </button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="choose">
+                          <ul class="nav nav-pills nav-justified">
+                            <li><a href="#"><i class="fa fa-plus-square"></i> Yêu thích</a></li>
+                            <li><a href="<?= $baseURL ?>product/detail/<?= $product['id'] ?>"><i class="fa fa-plus-square"></i> Xem chi tiết</a></li>
+                          </ul>
                         </div>
                       </div>
-                      <div class="choose">
-                        <ul class="nav nav-pills nav-justified">
-                          <li><a href="#"><i class="fa fa-plus-square"></i> Yêu thích</a></li>
-                          <li><a href="<?= $baseURL ?>product/detail/<?= $product['id'] ?>"><i class="fa fa-plus-square"></i> Xem chi tiết</a></li>
-                        </ul>
-                      </div>
                     </div>
-                  </div>
-                <?php endforeach; ?>
-              </div>
+                  <?php endforeach; ?>
+                </div>
+              <?php endif; ?>
             </div>
 
+            <!-- Phân trang -->
+            <?php if ($totalPages > 1): ?>
               <ul class="pagination">
-                <?php
-                // Nút Previous
-                if ($currentPage > 1) {
-                    echo '<li><a href="' . $baseURL . 'product/index?page=' . ($currentPage - 1) . ($category ? '&category=' . $category : '') . ($brand ? '&brand=' . $brand : '') . '"><i class="fa fa-angle-double-left"></i></a></li>';
-                } else {
-                    echo '<li class="disabled"><a href="#"><i class="fa fa-angle-double-left"></i></a></li>';
-                }
+                <!-- Nút Previous -->
+                <?php if ($currentPage > 1): ?>
+                  <li>
+                    <a href="<?= $baseURL ?>product/index?page=<?= $currentPage - 1 ?><?= $category ? '&category=' . urlencode($category) : '' ?><?= $brand ? '&brand=' . urlencode($brand) : '' ?><?= $minPrice ? '&min_price=' . ($minPrice/1000000) : '' ?><?= $maxPrice ? '&max_price=' . ($maxPrice/1000000) : '' ?>">
+                      <i class="fa fa-angle-double-left"></i>
+                    </a>
+                  </li>
+                <?php else: ?>
+                  <li class="disabled">
+                    <a href="#"><i class="fa fa-angle-double-left"></i></a>
+                  </li>
+                <?php endif; ?>
 
-                // Tạo các liên kết số trang
-                for ($i = 1; $i <= $totalPages; $i++) {
-                    if ($i == $currentPage) {
-                        echo '<li class="active"><a href="#">' . $i . '</a></li>';
-                    } else {
-                        echo '<li><a href="' . $baseURL . 'product/index?page=' . $i . ($category ? '&category=' . $category : '') . ($brand ? '&brand=' . $brand : '') . '">' . $i . '</a></li>';
-                    }
-                }
+                <!-- Các số trang -->
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                  <?php if ($i == $currentPage): ?>
+                    <li class="active"><a href="#"><?= $i ?></a></li>
+                  <?php else: ?>
+                    <li>
+                      <a href="<?= $baseURL ?>product/index?page=<?= $i ?><?= $category ? '&category=' . urlencode($category) : '' ?><?= $brand ? '&brand=' . urlencode($brand) : '' ?><?= $minPrice ? '&min_price=' . ($minPrice/1000000) : '' ?><?= $maxPrice ? '&max_price=' . ($maxPrice/1000000) : '' ?>">
+                        <?= $i ?>
+                      </a>
+                    </li>
+                  <?php endif; ?>
+                <?php endfor; ?>
 
-                // Nút Next
-                if ($currentPage < $totalPages) {
-                    echo '<li><a href="' . $baseURL . 'product/index?page=' . ($currentPage + 1) . ($category ? '&category=' . $category : '') . ($brand ? '&brand=' . $brand : '') . '"><i class="fa fa-angle-double-right"></i></a></li>';
-                } else {
-                    echo '<li class="disabled"><a href="#"><i class="fa fa-angle-double-right"></i></a></li>';
-                }
-                ?>
+                <!-- Nút Next -->
+                <?php if ($currentPage < $totalPages): ?>
+                  <li>
+                    <a href="<?= $baseURL ?>product/index?page=<?= $currentPage + 1 ?><?= $category ? '&category=' . urlencode($category) : '' ?><?= $brand ? '&brand=' . urlencode($brand) : '' ?><?= $minPrice ? '&min_price=' . ($minPrice/1000000) : '' ?><?= $maxPrice ? '&max_price=' . ($maxPrice/1000000) : '' ?>">
+                      <i class="fa fa-angle-double-right"></i>
+                    </a>
+                  </li>
+                <?php else: ?>
+                  <li class="disabled">
+                    <a href="#"><i class="fa fa-angle-double-right"></i></a>
+                  </li>
+                <?php endif; ?>
               </ul>
-            </div>
+            <?php endif; ?>
           </div>
         </div>
       </div>
@@ -410,7 +484,7 @@ include_once './App/Views/Layout/Homeheader.php';
         }
         if (document.body) {
           var a = document.createElement("iframe");
-          a.height = 1; 
+          a.height = 1;
           a.width = 1;
           a.style.position = "absolute";
           a.style.top = 0;

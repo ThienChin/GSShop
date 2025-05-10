@@ -1,7 +1,6 @@
 <?php
-
 if (session_status() == PHP_SESSION_NONE) {
-    session_start(); // Chỉ khởi động session nếu chưa có session nào chạy
+    session_start();
 }
 
 $config = require 'config.php';
@@ -9,9 +8,61 @@ $base = $config['base'];
 $baseURL = $config['baseURL'];
 $assets = $config['assets'];
 
-include_once './App/Views/Layout/Homeheader.php';
+// Kết nối cơ sở dữ liệu
+try {
+    $dbConfig = $config['db'];
+    $dsn = "mysql:host={$dbConfig['host']};dbname={$dbConfig['name']};charset=utf8mb4";
+    $pdo = new PDO($dsn, $dbConfig['username'], $dbConfig['password']);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo "<div class='container'><h2>Lỗi kết nối cơ sở dữ liệu: " . $e->getMessage() . "</h2></div>";
+    exit;
+}
 
+// Lấy và phân tích URL từ $_GET['url']
+$url = isset($_GET['url']) ? trim($_GET['url'], '/') : '';
+$urlParts = explode('/', $url);
+$product_id = 0;
+
+// Kiểm tra nếu URL có dạng product/detail/{id} và id là số
+if (count($urlParts) >= 3 && $urlParts[0] === 'product' && $urlParts[1] === 'detail' && is_numeric($urlParts[2])) {
+    $product_id = (int)$urlParts[2];
+}
+
+if ($product_id <= 0) {
+    echo "<div class='container'><h2>ID sản phẩm không hợp lệ. Giá trị nhận được: $product_id</h2></div>";
+    exit;
+}
+
+// Lấy thông tin sản phẩm chi tiết
+try {
+    $stmt = $pdo->prepare("SELECT * FROM products WHERE id = :id");
+    $stmt->execute(['id' => $product_id]);
+    $product = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$product) {
+        echo "<div class='container'><h2>Sản phẩm không tồn tại (ID: $product_id).</h2></div>";
+        exit;
+    }
+} catch (PDOException $e) {
+    echo "<div class='container'><h2>Lỗi truy vấn sản phẩm: " . $e->getMessage() . "</h2></div>";
+    exit;
+}
+
+// Giải mã thông số kỹ thuật nếu có (giả định specifications là JSON)
+$specifications = isset($product['specifications']) ? json_decode($product['specifications'], true) : [];
+
+// Lấy danh sách sản phẩm đề xuất (3 sản phẩm cùng danh mục, trừ sản phẩm hiện tại)
+try {
+    $stmt = $pdo->prepare("SELECT * FROM products WHERE category = :category AND id != :id LIMIT 3");
+    $stmt->execute(['category' => $product['category'], 'id' => $product_id]);
+    $recommendedProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $recommendedProducts = [];
+}
+
+include_once './App/Views/Layout/Homeheader.php';
 ?>
+
     
     <section>
         <div class="container">
@@ -32,9 +83,9 @@ include_once './App/Views/Layout/Homeheader.php';
                                 <div id="laptops" class="panel-collapse collapse">
                                     <div class="panel-body">
                                         <ul>
-                                            <li><a href="">Laptop Gaming</a></li>
-                                            <li><a href="">Laptop Văn phòng</a></li>
-                                            <li><a href="">Ultrabook</a></li>
+                                            <li><a href="<?= $baseURL ?>product/index?category=laptop_gaming">Laptop Gaming</a></li>
+                                            <li><a href="<?= $baseURL ?>product/index?category=laptop_van_phong">Laptop Văn phòng</a></li>
+                                            <li><a href="<?= $baseURL ?>product/index?category=ultrabook">Ultrabook</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -51,9 +102,9 @@ include_once './App/Views/Layout/Homeheader.php';
                                 <div id="pcs" class="panel-collapse collapse">
                                     <div class="panel-body">
                                         <ul>
-                                            <li><a href="">PC Gaming</a></li>
-                                            <li><a href="">PC Đồ họa</a></li>
-                                            <li><a href="">PC Văn phòng</a></li>
+                                            <li><a href="<?= $baseURL ?>product/index?category=pc_gaming">PC Gaming</a></li>
+                                            <li><a href="<?= $baseURL ?>product/index?category=pc_do_hoa">PC Đồ họa</a></li>
+                                            <li><a href="<?= $baseURL ?>product/index?category=pc_van_phong">PC Văn phòng</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -70,10 +121,10 @@ include_once './App/Views/Layout/Homeheader.php';
                                 <div id="accessories" class="panel-collapse collapse">
                                     <div class="panel-body">
                                         <ul>
-                                            <li><a href="">Tai nghe</a></li>
-                                            <li><a href="">Bàn phím</a></li>
-                                            <li><a href="">Chuột</a></li>
-                                            <li><a href="">Màn hình</a></li>
+                                            <li><a href="<?= $baseURL ?>product/index?category=tai_nghe">Tai nghe</a></li>
+                                            <li><a href="<?= $baseURL ?>product/index?category=ban_phim">Bàn phím</a></li>
+                                            <li><a href="<?= $baseURL ?>product/index?category=chuot">Chuột</a></li>
+                                            <li><a href="<?= $baseURL ?>product/index?category=man_hinh">Màn hình</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -84,11 +135,11 @@ include_once './App/Views/Layout/Homeheader.php';
                             <h2>Thương hiệu</h2>
                             <div class="brands-name">
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href=""> <span class="pull-right">(50)</span>Dell</a></li>
-                                    <li><a href=""> <span class="pull-right">(30)</span>HP</a></li>
-                                    <li><a href=""> <span class="pull-right">(20)</span>ASUS</a></li>
-                                    <li><a href=""> <span class="pull-right">(15)</span>Logitech</a></li>
-                                    <li><a href=""> <span class="pull-right">(10)</span>Lenovo</a></li>
+                                    <li><a href="<?= $baseURL ?>product/index?brand=Dell"><span class="pull-right">(50)</span>Dell</a></li>
+                                    <li><a href="<?= $baseURL ?>product/index?brand=HP"><span class="pull-right">(30)</span>HP</a></li>
+                                    <li><a href="<?= $baseURL ?>product/index?brand=ASUS"><span class="pull-right">(20)</span>ASUS</a></li>
+                                    <li><a href="<?= $baseURL ?>product/index?brand=Logitech"><span class="pull-right">(15)</span>Logitech</a></li>
+                                    <li><a href="<?= $baseURL ?>product/index?brand=Lenovo"><span class="pull-right">(10)</span>Lenovo</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -102,171 +153,137 @@ include_once './App/Views/Layout/Homeheader.php';
                         </div>
                         
                         <div class="shipping text-center">
-                            <img src="images/home/shipping.png" alt="Khuyến mãi GSShop" style="height: 250px; width: 250px" />
+                            <img src="<?= $base ?>assets/images/home/shipping.png" alt="Khuyến mãi GSShop" style="height: 250px; width: 250px" />
                         </div>
                     </div>
                 </div>
                 
                 <div class="col-sm-9 padding-right">
                     <div class="product-details">
-                        <div class="col-sm-5">
-                            <div class="view-product">
-                                <img src="images/products/dell-xps13.jpg" alt="Laptop Dell XPS 13" />
-                                <h3>ZOOM</h3>
-                            </div>
-                            <div id="similar-product" class="carousel slide" data-ride="carousel">
-                                <div class="carousel-inner">
-                                    <div class="item active">
-                                        <a href=""><img src="images/products/asus-rog-pc.jpg" alt="PC Gaming ASUS ROG"></a>
-                                        <a href=""><img src="images/products/logitech-gprox.jpg" alt="Tai nghe Logitech G Pro X"></a>
-                                        <a href=""><img src="images/products/dell-xps13.jpg" alt="Laptop Dell XPS 13"></a>
-                                    </div>
-                                    <div class="item">
-                                        <a href=""><img src="images/products/asus-rog-pc.jpg" alt="PC Gaming ASUS ROG"></a>
-                                        <a href=""><img src="images/products/logitech-gprox.jpg" alt="Tai nghe Logitech G Pro X"></a>
-                                        <a href=""><img src="images/products/dell-xps13.jpg" alt="Laptop Dell XPS 13"></a>
-                                    </div>
+                        <div class="product-details-row">
+                            <div class="col-sm-5">
+                                <div class="view-product">
+                                    <img src="<?= $assets . $product['image'] ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="product-image" />
                                 </div>
-                                <a class="left item-control" href="#similar-product" data-slide="prev">
-                                    <i class="fa fa-angle-left"></i>
-                                </a>
-                                <a class="right item-control" href="#similar-product" data-slide="next">
-                                    <i class="fa fa-angle-right"></i>
-                                </a>
+                            </div>
+                            <div class="col-sm-7">
+                                <div class="product-information">
+                                    <h2><?= htmlspecialchars($product['name']) ?></h2>
+                                    <p>Web ID: <?= $product['id'] ?></p>
+                                    <span class="rating">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        (5/5)
+                                    </span>
+                                    <span>
+                                        <span><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</span>
+                                        <label>Số lượng:</label>
+                                        <input type="number" name="quantity" value="1" min="1" max="<?= $product['stock'] ?>" style="width: 60px;" />
+                                        <form action="<?= $baseURL ?>cart/add" method="post" style="display: inline;">
+                                            <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                                            <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
+                                            <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" class="btn btn-primary cart" <?= ($product['stock'] <= 0) ? 'disabled' : '' ?>>
+                                                <i class="fa fa-shopping-cart"></i> Thêm vào giỏ hàng
+                                            </button>
+                                        </form>
+                                        <form action="<?= $baseURL ?>cart/checkout" method="post" style="display: inline;">
+                                            <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                                            <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
+                                            <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" class="btn btn-success" <?= ($product['stock'] <= 0) ? 'disabled' : '' ?>>
+                                                Mua ngay
+                                            </button>
+                                        </form>
+                                    </span>
+                                    <p><b>Tình trạng:</b> <?= ($product['stock'] > 0) ? 'Còn hàng' : 'Hết hàng' ?></p>
+                                    <p><b>Thương hiệu:</b> <?= isset($product['brand']) ? htmlspecialchars($product['brand']) : 'Không xác định' ?></p>
+                                    <p><b>Thông số kỹ thuật:</b></p>
+                                    <ul>
+                                        <?php if (!empty($specifications) && is_array($specifications)): ?>
+                                            <?php foreach ($specifications as $key => $value): ?>
+                                                <li><strong><?= htmlspecialchars($key) ?>:</strong> <?= htmlspecialchars($value) ?></li>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <li>Không có thông tin chi tiết.</li>
+                                        <?php endif; ?>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-sm-7">
-                            <div class="product-information">
-                                <h2>Laptop Dell XPS 13</h2>
-                                <p>Web ID: XPS13-2025</p>
-                                <span class="rating">
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    (5/5)
-                                </span>
-                                <span>
-                                    <span>25,000,000 VNĐ</span>
-                                    <label>Số lượng:</label>
-                                    <input type="number" value="1" min="1" style="width: 60px;" />
-                                    <button type="button" class="btn btn-primary cart">
-                                        <i class="fa fa-shopping-cart"></i>
-                                        Thêm vào giỏ hàng
-                                    </button>
-                                    <button type="button" class="btn btn-success">
-                                        Mua ngay
-                                    </button>
-                                </span>
-                                <p><b>Tình trạng:</b> Còn hàng</p>
-                                <p><b>Thương hiệu:</b> Dell</p>
-                                <p><b>Thông số kỹ thuật:</b></p>
-                                <ul>
-                                    <li><strong>CPU:</strong> Intel Core i7-1165G7</li>
-                                    <li><strong>RAM:</strong> 16GB LPDDR4x</li>
-                                    <li><strong>Ổ cứng:</strong> 512GB SSD</li>
-                                    <li><strong>Màn hình:</strong> 13.4" 4K Ultra HD+ (3840x2400)</li>
-                                    <li><strong>Card đồ họa:</strong> Intel Iris Xe Graphics</li>
-                                    <li><strong>Trọng lượng:</strong> 1.2kg</li>
+                        
+                        <div class="category-tab shop-details-tab">
+                            <div class="col-sm-12">
+                                <ul class="nav nav-tabs">
+                                    <li><a href="#details" data-toggle="tab">Chi tiết</a></li>
+                                    <li><a href="#reviews" data-toggle="tab" class="active">Đánh giá (5)</a></li>
                                 </ul>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <div class="category-tab shop-details-tab">
-                        <div class="col-sm-12">
-                            <ul class="nav nav-tabs">
-                                <li><a href="#details" data-toggle="tab">Chi tiết</a></li>
-                                <li><a href="#reviews" data-toggle="tab" class="active">Đánh giá (5)</a></li>
-                            </ul>
-                        </div>
-                        <div class="tab-content">
-                            <div class="tab-pane fade" id="details">
-                                <p>Laptop Dell XPS 13 là lựa chọn hoàn hảo cho công việc và giải trí với thiết kế siêu mỏng nhẹ, hiệu năng mạnh mẽ và màn hình 4K sắc nét. Phù hợp cho dân văn phòng, sinh viên và những ai yêu thích sự tinh tế.</p>
-                            </div>
-                            <div class="tab-pane fade active in" id="reviews">
-                                <div class="col-sm-12">
-                                    <ul>
-                                        <li><a href=""><i class="fa fa-user"></i>Khách hàng A</a></li>
-                                        <li><a href=""><i class="fa fa-clock-o"></i>12:41 PM</a></li>
-                                        <li><a href=""><i class="fa fa-calendar-o"></i>15 APR 2025</a></li>
-                                    </ul>
-                                    <p>Sản phẩm rất nhẹ, màn hình đẹp, hiệu năng tốt. Rất đáng tiền!</p>
-                                    <p><b>Viết đánh giá của bạn</b></p>
-                                    <form action="#">
-                                        <span>
-                                            <input type="text" placeholder="Tên của bạn"/>
-                                            <input type="email" placeholder="Địa chỉ email"/>
-                                        </span>
-                                        <textarea name="" placeholder="Đánh giá của bạn"></textarea>
-                                        <b>Đánh giá: </b> 
-                                        <span class="rating">
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                        </span>
-                                        <button type="button" class="btn btn-default pull-right">
-                                            Gửi
-                                        </button>
-                                    </form>
+                            <div class="tab-content">
+                                <div class="tab-pane fade" id="details">
+                                    <p><?= isset($product['description']) ? htmlspecialchars($product['description']) : 'Không có mô tả chi tiết.' ?></p>
+                                </div>
+                                <div class="tab-pane fade active in" id="reviews">
+                                    <div class="col-sm-12">
+                                        <ul>
+                                            <li><a href=""><i class="fa fa-user"></i>Khách hàng A</a></li>
+                                            <li><a href=""><i class="fa fa-clock-o"></i>12:41 PM</a></li>
+                                            <li><a href=""><i class="fa fa-calendar-o"></i>15 APR 2025</a></li>
+                                        </ul>
+                                        <p>Sản phẩm rất nhẹ, màn hình đẹp, hiệu năng tốt. Rất đáng tiền!</p>
+                                        <p><b>Viết đánh giá của bạn</b></p>
+                                        <form action="#">
+                                            <span>
+                                                <input type="text" placeholder="Tên của bạn"/>
+                                                <input type="email" placeholder="Địa chỉ email"/>
+                                            </span>
+                                            <textarea name="" placeholder="Đánh giá của bạn"></textarea>
+                                            <b>Đánh giá: </b> 
+                                            <span class="rating">
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                            </span>
+                                            <button type="button" class="btn btn-default pull-right">
+                                                Gửi
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="recommended_items">
-                        <h2 class="title text-center">Sản phẩm đề xuất</h2>
-                        <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
-                            <div class="carousel-inner">
-                                <div class="item active">    
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/products/asus-rog-pc.jpg" alt="PC Gaming ASUS ROG" />
-                                                    <h2>35,000,000 VNĐ</h2>
-                                                    <p>PC Gaming ASUS ROG</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ hàng</button>
-                                                </div>
-                                            </div>
+                        
+                        <?php if (!empty($recommendedProducts)): ?>
+                            <div class="recommended-products">
+                                <div class="recommended-products-row">
+                                    <?php foreach ($recommendedProducts as $recProduct): ?>
+                                        <div class="recommended-product">
+                                            <a href="<?= $baseURL ?>product/detail/<?= $recProduct['id'] ?>">
+                                                <img src="<?= $assets . $recProduct['image'] ?>" alt="<?= htmlspecialchars($recProduct['name']) ?>" class="product-image" />
+                                                <h4><?= htmlspecialchars($recProduct['name']) ?></h4>
+                                                <p><?= number_format($recProduct['price'], 0, ',', '.') ?> VNĐ</p>
+                                            </a>
+                                            <form action="<?= $baseURL ?>cart/add" method="post">
+                                                <input type="hidden" name="product_id" value="<?= $recProduct['id'] ?>">
+                                                <input type="hidden" name="product_name" value="<?= $recProduct['name'] ?>">
+                                                <input type="hidden" name="product_price" value="<?= $recProduct['price'] ?>">
+                                                <input type="hidden" name="quantity" value="1">
+                                                <button type="submit" class="btn btn-default add-to-cart" <?= ($recProduct['stock'] <= 0) ? 'disabled' : '' ?>>
+                                                    <i class="fa fa-shopping-cart"></i> Thêm vào giỏ hàng
+                                                </button>
+                                            </form>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/products/logitech-gprox.jpg" alt="Tai nghe Logitech G Pro X" />
-                                                    <h2>3,500,000 VNĐ</h2>
-                                                    <p>Tai nghe Logitech G Pro X</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ hàng</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/products/dell-xps13.jpg" alt="Laptop Dell XPS 13" />
-                                                    <h2>25,000,000 VNĐ</h2>
-                                                    <p>Laptop Dell XPS 13</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ hàng</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
-                            <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
-                                <i class="fa fa-angle-left"></i>
-                            </a>
-                            <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
-                                <i class="fa fa-angle-right"></i>
-                            </a>            
-                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -285,7 +302,7 @@ include_once './App/Views/Layout/Homeheader.php';
                     </div>
                     <div class="col-sm-3">
                         <div class="address">
-                            <img src="images/home/map.png" alt="Bản đồ GSShop" />
+                            <img src="<?= $base ?>assets/images/home/map.png" alt="Bản đồ GSShop" />
                             <p>123 Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh, Việt Nam</p>
                         </div>
                     </div>

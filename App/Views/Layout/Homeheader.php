@@ -23,6 +23,7 @@ $current_page = basename($_SERVER['REQUEST_URI']);
     />
     <meta name="author" content="GSShop" />
     <title>Trang chủ | GS-Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" />
     <!-- CSS Boostrap -->
     <link href="<?= $base ?>assets/css/bootstrap.min.css" rel="stylesheet" />
@@ -38,6 +39,102 @@ $current_page = basename($_SERVER['REQUEST_URI']);
       <script src="js/html5shiv.js"></script>
       <script src="js/respond.min.js"></script>
     <![endif]-->
+    <style>
+#hero-banner {
+  position: relative;
+  height: 300px;
+  background: linear-gradient(120deg, #2c3e50, #3498db, #2c3e50);
+  background-size: 200% 200%;
+  animation: gradientShift 10s ease infinite;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  max-width: 1200px; 
+  margin: 0 auto;
+  border: 3px solid transparent;
+  border-image: linear-gradient(45deg, #00b4db, #0083b0) 1;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  margin-bottom: 30px; /* Thêm khoảng cách dưới section */
+}
+
+#hero-banner .hero-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  max-width: 100%;
+}
+
+#hero-banner .hero-text {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+#hero-banner .hero-text:nth-child(1) {
+  animation: fadeSlideUp 1s ease-in-out 0s forwards;
+}
+
+#hero-banner .hero-text:nth-child(2) {
+  animation: fadeSlideUp 1s ease-in-out 0.5s forwards;
+}
+
+#hero-banner .hero-text:nth-child(3) {
+  animation: fadeSlideUp 1s ease-in-out 1s forwards;
+}
+
+#hero-banner h1 {
+  font-size: 50px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  transition: color 0.3s ease;
+}
+
+#hero-banner h1:hover {
+  color: #00b4db;
+}
+
+#hero-banner h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+#hero-banner p {
+  font-size: 12px;
+  max-width: 90%;
+  margin: 0 auto 20px;
+  line-height: 1.4;
+}
+
+section { /* Đảm bảo các section khác có padding/margin trên để tách biệt */
+  padding-top: 20px;
+}
+
+@keyframes fadeSlideUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+@media (max-width: 767px) {
+  #hero-banner {
+    height: 300px;
+    max-width: 90%;
+  }
+  #hero-banner h1 { font-size: 40px; }
+  #hero-banner h2 { font-size: 18px; }
+  #hero-banner p { font-size: 10px; }
+}
+</style>
   </head>
   <body>
     <header id="header">
@@ -101,14 +198,6 @@ $current_page = basename($_SERVER['REQUEST_URI']);
                     <a href=""><i class="fa fa-user"></i> Tài khoản</a>
                   </li>
                   <li>
-                    <a href=""><i class="fa fa-star"></i> Yêu thích</a>
-                  </li>
-                  <li>
-                    <a href="<?= $baseURL ?>order/checkout"
-                      ><i class="fa fa-crosshairs"></i> Thanh toán</a
-                    >
-                  </li>
-                  <li>
                     <a href="<?= $baseURL ?>cart/cart"
                       ><i class="fa fa-shopping-cart"></i> Giỏ hàng</a
                     >
@@ -158,9 +247,6 @@ $current_page = basename($_SERVER['REQUEST_URI']);
                     <ul role="menu" class="sub-menu">
                         <li class="<?php echo (strpos($current_page, 'product/index') !== false) ? 'active' : ''; ?>">
                             <a href="<?= $baseURL ?>product/index">Danh sách sản phẩm</a>
-                        </li>
-                        <li class="<?php echo (strpos($current_page, 'product/detail') !== false) ? 'active' : ''; ?>">
-                            <a href="<?= $baseURL ?>product/detail">Chi tiết sản phẩm</a>
                         </li>
                         <li class="<?php echo ($current_page == 'checkout') ? 'active' : ''; ?>">
                             <a href="<?= $baseURL ?>order/checkout">Thanh toán</a>

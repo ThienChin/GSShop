@@ -19,15 +19,25 @@ class CartController
         $grandTotal = 0;
 
         if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+            // Lọc các mục không hợp lệ
+            $_SESSION['cart'] = array_filter($_SESSION['cart'], function ($item) {
+                return isset($item['source']) && in_array($item['source'], ['product', 'featured']) &&
+                    (isset($item['product_id']) || isset($item['featuredproduct_id']));
+            });
+
             foreach ($_SESSION['cart'] as $item) {
                 $product = null;
-                if ($item['source'] === 'featured' && isset($item['featuredproduct_id'])) {
+
+                // Kiểm tra khóa 'source', mặc định là 'product' nếu không có
+                $source = isset($item['source']) ? $item['source'] : 'product';
+
+                if ($source === 'featured' && isset($item['featuredproduct_id'])) {
                     $product = $this->productModel->getFeaturedProductById($item['featuredproduct_id']);
                     if ($product) {
                         $product['source'] = 'featured';
                         $product['id'] = $item['featuredproduct_id'];
                     }
-                } elseif ($item['source'] === 'product' && isset($item['product_id'])) {
+                } elseif ($source === 'product' && isset($item['product_id'])) {
                     $product = $this->productModel->getProductById($item['product_id']);
                     if ($product) {
                         $product['source'] = 'product';

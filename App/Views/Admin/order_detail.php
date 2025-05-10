@@ -44,32 +44,29 @@ include_once './App/Views/Layout/Adminheader.php';
 
                     <!-- Thông tin thanh toán -->
                     <?php if ($order['billing_info']) : ?>
-                        <?php $billing = json_decode($order['billing_info'], true); ?>
+                        <?php $billing_info = is_array($order['billing_info']) ? $order['billing_info'] : (json_decode($order['billing_info'], true) ?? []); ?>
                         <div class="card shadow-sm mb-4">
                             <div class="card-header bg-light">
                                 <h5 class="mb-0">Thông Tin Thanh Toán</h5>
                             </div>
                             <div class="card-body">
-                                <p><strong>Tên:</strong> <?= htmlspecialchars($billing['name']) ?></p>
-                                <p><strong>Email:</strong> <?= htmlspecialchars($billing['email']) ?></p>
-                                <p><strong>Số điện thoại:</strong> <?= htmlspecialchars($billing['phone']) ?></p>
+                                <li><span>Người nhận:</span> <span><?= htmlspecialchars($order['billing_info']['name'] ?? 'N/A') ?></span></li>
+                                <li><span>Email:</span> <span><?= htmlspecialchars($order['billing_info']['email'] ?? 'N/A') ?></span></li> 
+                                <li><span>Số điện thoại:</span> <span><?= htmlspecialchars($order['billing_info']['phone'] ?? 'N/A') ?></span></li>
                             </div>
                         </div>
                     <?php endif; ?>
 
                     <!-- Địa chỉ giao hàng -->
                     <?php if ($order['shipping_address']) : ?>
-                        <?php $shipping = json_decode($order['shipping_address'], true); ?>
+                        <?php $shipping_address = is_array($order['shipping_address']) ? $order['shipping_address'] : (json_decode($order['shipping_address'], true) ?? []); ?>
                         <div class="card shadow-sm">
                             <div class="card-header bg-light">
                                 <h5 class="mb-0">Địa Chỉ Giao Hàng</h5>
                             </div>
                             <div class="card-body">
-                                <p><strong>Địa chỉ:</strong> <?= htmlspecialchars($shipping['address']) ?></p>
-                                <p><strong>Thành phố:</strong> <?= htmlspecialchars($shipping['city']) ?></p>
-                                <?php if (isset($shipping['zip'])) : ?>
-                                    <p><strong>Mã bưu điện:</strong> <?= htmlspecialchars($shipping['zip']) ?></p>
-                                <?php endif; ?>
+                                <li><span>Địa chỉ:</span> <span><?= htmlspecialchars($order['shipping_address']['address'] ?? 'N/A') ?></span></li>
+                                <li><span>Thành phố:</span> <span><?= htmlspecialchars($order['shipping_address']['city'] ?? 'N/A') ?></span></li> 
                             </div>
                         </div>
                     <?php endif; ?>

@@ -3261,3 +3261,34 @@ body { /* Addresses a small issue in webkit: http://bit.ly/NEdoDq */
     -o-animation-duration: 0.75s;
     animation-duration: 0.75s;
 }
+.banner-content h1 {
+  opacity: 0;
+  transform: translateY(-50px);
+  animation: fadeInDownCustom 1s ease forwards;
+}
+
+.banner-content h2 {
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeInUpCustom 1s ease forwards 1s;
+}
+
+.banner-content p {
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeInUpCustom 1s ease forwards 2s;
+}
+
+@keyframes fadeInDownCustom {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUpCustom {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
