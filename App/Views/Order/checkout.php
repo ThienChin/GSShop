@@ -97,7 +97,7 @@ include_once './App/Views/Layout/Homeheader.php';
                 <div class="col-sm-4">
                     <div class="order-message">
                         <p>Ghi chú đơn hàng</p>
-                        <textarea name="message" placeholder="Ghi chú về đơn hàng, ví dụ: thời gian giao hàng mong muốn" rows="8"></textarea>
+                            <textarea name="message" placeholder="Ghi chú về đơn hàng, ví dụ: thời gian giao hàng mong muốn" rows="8" style="width: 207px; height: 67px;"></textarea>
                         <label><input type="checkbox" checked> Giao hàng đến địa chỉ thanh toán</label>
                     </div>
                 </div>

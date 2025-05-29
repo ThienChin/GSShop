@@ -26,6 +26,7 @@ $current_page = basename($_SERVER['REQUEST_URI']);
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" />
     <!-- CSS Boostrap -->
     <link href="<?= $base ?>assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
     <!-- CSS Core Theme -->
     <link href="<?= $base ?>assets/css/font-awesome.min.css" rel="stylesheet" />
     <link href="<?= $base ?>assets/css/prettyPhoto.css" rel="stylesheet" />
@@ -99,9 +100,6 @@ $current_page = basename($_SERVER['REQUEST_URI']);
                 <ul class="nav navbar-nav">
                   <li>
                     <a href=""><i class="fa fa-user"></i> Tài khoản</a>
-                  </li>
-                  <li>
-                    <a href=""><i class="fa fa-star"></i> Yêu thích</a>
                   </li>
                   <li>
                     <a href="<?= $baseURL ?>order/checkout"
