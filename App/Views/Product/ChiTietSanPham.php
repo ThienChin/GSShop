@@ -172,8 +172,6 @@ include_once './App/Views/Layout/Homeheader.php';
                                     </span>
                                     <span>
                                         <span><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</span>
-                                        <label>Số lượng:</label>
-                                        <input type="number" name="quantity" value="1" min="1" max="<?= $product['stock'] ?>" style="width: 60px;" />
                                         <form action="<?= $baseURL ?>cart/add" method="post" style="display: inline;">
                                             <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
                                             <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
@@ -181,15 +179,6 @@ include_once './App/Views/Layout/Homeheader.php';
                                             <input type="hidden" name="quantity" value="1">
                                             <button type="submit" class="btn btn-primary cart" <?= ($product['stock'] <= 0) ? 'disabled' : '' ?>>
                                                 <i class="fa fa-shopping-cart"></i> Thêm vào giỏ hàng
-                                            </button>
-                                        </form>
-                                        <form action="<?= $baseURL ?>cart/checkout" method="post" style="display: inline;">
-                                            <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                                            <input type="hidden" name="product_name" value="<?= $product['name'] ?>">
-                                            <input type="hidden" name="product_price" value="<?= $product['price'] ?>">
-                                            <input type="hidden" name="quantity" value="1">
-                                            <button type="submit" class="btn btn-success" <?= ($product['stock'] <= 0) ? 'disabled' : '' ?>>
-                                                Mua ngay
                                             </button>
                                         </form>
                                     </span>
@@ -271,6 +260,11 @@ include_once './App/Views/Layout/Homeheader.php';
                                                     <i class="fa fa-shopping-cart"></i> Thêm vào giỏ hàng
                                                 </button>
                                             </form>
+                                            <div class="choose">
+                                                <ul class="nav nav-pills nav-justified">
+                                                    <li><a href="<?= $baseURL ?>product/detail/<?= $product['id'] ?>"><i class="fa fa-plus-square"></i> Xem chi tiết</a></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>

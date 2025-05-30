@@ -18,6 +18,7 @@ $assets = $config['assets'];
     <meta name="description" content="GSShop - Liên hệ để mua PC, Laptop, Phụ kiện công nghệ">
     <meta name="author" content="GSShop">
     <title>Liên hệ | GSShop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" />
     <link href="<?= $base ?>assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= $base ?>assets/css/font-awesome.min.css" rel="stylesheet">
     <link href="<?= $base ?>assets/css/prettyPhoto.css" rel="stylesheet">
@@ -70,9 +71,22 @@ $assets = $config['assets'];
                     <div class="col-sm-8">
                         <div class="shop-menu pull-right">
                             <ul class="nav navbar-nav">
-                                <li><a href="#"><i class="fa fa-user"></i> Tài khoản</a></li>
-                                <li><a href="<?= $baseURL ?>cart/cart"><i class="fa fa-shopping-cart"></i> Giỏ hàng</a></li>
-                                <li><a href="<?= $baseURL ?>user/login"><i class="fa fa-lock"></i> Đăng nhập</a></li>
+                                <li>
+                                    <a href="<?= $baseURL ?>order/history" class="<?php echo ($current_page == 'history') ? 'active' : ''; ?>">
+                                    <i class="fa fa-history"></i> Lịch sử mua hàng
+                                    </a>
+                                </li>
+                                <li>
+                                    <?php if (isset($_SESSION['username'])): ?>
+                                        <a href="<?= $baseURL ?>user/logout">
+                                            <i class="fa fa-user"></i> <?= htmlspecialchars($_SESSION['username']) ?>
+                                        </a>
+                                    <?php else: ?>
+                                        <a href="<?= $baseURL ?>user/login">
+                                            <i class="fa fa-lock"></i> Đăng nhập
+                                        </a>
+                                    <?php endif; ?>
+                                </li>
                             </ul>
                         </div>
                     </div>

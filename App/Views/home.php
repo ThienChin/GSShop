@@ -229,7 +229,6 @@ include_once 'Layout/Homeheader.php';
                   </div>
                   <div class="choose">
                     <ul class="nav nav-pills nav-justified">
-                      <li><a href="#"><i class="fa fa-plus-square"></i> Yêu thích</a></li>
                       <li><a href="<?= $baseURL ?>product/detail/<?= $product['id'] ?>"><i class="fa fa-plus-square"></i> Xem chi tiết</a></li>
                     </ul>
                   </div>

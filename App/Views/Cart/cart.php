@@ -157,7 +157,7 @@ include_once './App/Views/Layout/Homeheader.php';
                     </div>
                     <div class="col-sm-3">
                         <div class="address">
-                            <img src="images/home/map.png" alt="Bản đồ GSShop" />
+                            <img src="<?= $assets ?>images/home/map.png" alt="Bản đồ GSShop" />
                             <p>123 Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh, Việt Nam</p>
                         </div>
                     </div>

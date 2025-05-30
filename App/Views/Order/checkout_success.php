@@ -17,6 +17,7 @@ $assets = $config['assets'];
     <meta name="description" content="Đặt hàng thành công tại GS-Shop. Cảm ơn bạn đã mua sắm với chúng tôi!">
     <meta name="author" content="GSShop">
     <title>Đặt Hàng Thành Công | GS-Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" />
     <link href="<?= $base ?>assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= $base ?>assets/css/font-awesome.min.css" rel="stylesheet">
     <link href="<?= $base ?>assets/css/prettyPhoto.css" rel="stylesheet">
@@ -135,9 +136,6 @@ $assets = $config['assets'];
                 <div class="col-sm-8">
                 <div class="shop-menu pull-right">
                     <ul class="nav navbar-nav">
-                    <li>
-                        <a href=""><i class="fa fa-user"></i> Tài khoản</a>
-                    </li>
                     <li>
                         <a href="<?= $baseURL ?>order/history" class="<?php echo ($current_page == 'history') ? 'active' : ''; ?>">
                         <i class="fa fa-history"></i> Lịch sử mua hàng
@@ -263,7 +261,7 @@ $assets = $config['assets'];
                     </div>
                     <div class="col-sm-3">
                         <div class="address">
-                            <img src="images/home/map.png" alt="Bản đồ GSShop" />
+                            <img src="<?= $assets ?>images/home/map.png" alt="Bản đồ GSShop" />
                             <p>123 Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh, Việt Nam</p>
                         </div>
                     </div>

@@ -69,46 +69,51 @@ class OrderModel
     }
 
     public function createOrder($userId, $total, $billingInfo, $shippingAddress, $paymentMethod, $notes)
-    {
-        try {
-            // Kiểm tra dữ liệu đầu vào
-            if (empty($billingInfo) || empty($shippingAddress)) {
-                error_log("Lỗi tạo đơn hàng: billing_info hoặc shipping_address trống.");
-                throw new Exception('Thông tin thanh toán hoặc địa chỉ giao hàng trống.');
-            }
-            if (!is_numeric($total) || $total <= 0) {
-                error_log("Lỗi tạo đơn hàng: total không hợp lệ ($total).");
-                throw new("Tổng tiền không hợp lệ.");
-            }
-
-            $sql = [
-                'user_id' => $userId,
-                'total' => $total,
-                'completed' => 'pending',
-                'billing_info' => $billingInfo,
-                'payment_method' => $paymentMethod,
-                'notes' => $notes
-            ];
-            $sql = "INSERT INTO orders (user_id, total, order_date, status, billing_info, shipping_address, payment_method, notes)
-                    VALUES (:user_id, :total, NOW(), :status, :billing_info, :shipping_address, :payment_method, :notes)";
-            $stmt = $this->db->prepare($sql);
-            $result->execute($sql);
-            if (!$result) {
-                error_log("Lỗi SQL khi tạo đơn hàng: " . implode(', ', $this->db->errorInfo()));
-                throw new Exception('Lỗi SQL khi tạo đơn hàng.');
-            }
-            $orderId = $this->db->lastInsertId();
-            if (!$orderId) {
-                error_log("Lỗi tạo đơn hàng: Không lấy được order_id.");
-                throw new Exception('Không thể lấy ID đơn hàng.');
-            }
-            return $orderId;
-        } catch (Exception $e) {
-            error_log("Lỗi khi tạo đơn hàng: " . $e->getMessage());
-            throw $e;
+{
+    try {
+        // Kiểm tra dữ liệu đầu vào
+        if (empty($billingInfo) || empty($shippingAddress)) {
+            error_log("Lỗi tạo đơn hàng: billing_info hoặc shipping_address trống.");
+            throw new Exception('Thông tin thanh toán hoặc địa chỉ giao hàng trống.');
+        }
+        if (!is_numeric($total) || $total <= 0) {
+            error_log("Lỗi tạo đơn hàng: total không hợp lệ ($total).");
+            throw new Exception("Tổng tiền không hợp lệ.");
         }
 
+        $sql = "INSERT INTO orders (user_id, total, order_date, status, billing_info, shipping_address, payment_method, notes)
+                VALUES (:user_id, :total, NOW(), :status, :billing_info, :shipping_address, :payment_method, :notes)";
+        $stmt = $this->db->prepare($sql);
+        
+        // Định nghĩa tham số
+        $params = [
+            ':user_id' => $userId,
+            ':total' => $total,
+            ':status' => 'pending',
+            ':billing_info' => $billingInfo,
+            ':shipping_address' => $shippingAddress,
+            ':payment_method' => $paymentMethod,
+            ':notes' => $notes
+        ];
+
+        // Thực thi câu lệnh
+        $success = $stmt->execute($params);
+        if (!$success) {
+            error_log("Lỗi SQL khi tạo đơn hàng: " . implode(', ', $this->db->errorInfo()));
+            throw new Exception('Lỗi SQL khi tạo đơn hàng.');
+        }
+
+        $orderId = $this->db->lastInsertId();
+        if (!$orderId) {
+            error_log("Lỗi tạo đơn hàng: Không lấy được order_id.");
+            throw new Exception('Không thể lấy ID đơn hàng.');
+        }
+        return $orderId;
+    } catch (Exception $e) {
+        error_log("Lỗi khi tạo đơn hàng: " . $e->getMessage());
+        throw $e;
     }
+}
 
     public function addOrderItem($orderId, $productId, $featuredproductId, $quantity, $price)
     {

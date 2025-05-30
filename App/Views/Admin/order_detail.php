@@ -20,8 +20,14 @@ include_once __DIR__ . '/../Layout/Adminheader.php';
         <div class="sidebar" data-background-color="dark">
             <div class="sidebar-logo">
                 <div class="logo-header" data-background-color="dark">
-                    <a href="<?= $baseURL ?>admin" class="logo">
-                        <img src="<?= $base ?>assets/images/logo.png" alt="navbar brand" class="navbar-brand" height="50" />
+                     <a href="<?= $baseURL ?>home/index" class="logo">
+                        <img
+                            src="<?= $base ?>assets/images/home/logo.png"
+                            alt="navbar brand"
+                            class="navbar-brand"
+                            height="100"
+                            width="200"
+                        />
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar"><i class="gg-menu-right"></i></button>
@@ -84,9 +90,6 @@ include_once __DIR__ . '/../Layout/Adminheader.php';
                             </div>
                         </nav>
                         <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
-                            <li class="nav-item topbar d-none d-lg-block">
-                                <a class="nav-link" href="#" role="button">Hi, <?= htmlspecialchars($_SESSION['username'] ?? 'Admin') ?></a>
-                            </li>
                             <li class="nav-item topbar-user dropdown hidden-caret">
                                 <a class="dropdown-toggle profile-pic" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                                     <div class="avatar-sm">
@@ -94,7 +97,7 @@ include_once __DIR__ . '/../Layout/Adminheader.php';
                                     </div>
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
-                                        <span class="fw-bold"><?= htmlspecialchars($_SESSION['username']) ?></span>
+                                        <span class="nav-username"><?= htmlspecialchars(isset($_SESSION['username']) ? $_SESSION['username'] : 'Admin') ?></span>
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-user animated">

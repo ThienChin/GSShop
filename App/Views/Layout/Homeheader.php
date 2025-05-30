@@ -26,7 +26,7 @@ $current_page = basename($_SERVER['REQUEST_URI']);
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" />
     <!-- CSS Boostrap -->
     <link href="<?= $base ?>assets/css/bootstrap.min.css" rel="stylesheet" />
-    <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>  -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/> 
     <!-- CSS Core Theme -->
     <link href="<?= $base ?>assets/css/font-awesome.min.css" rel="stylesheet" />
     <link href="<?= $base ?>assets/css/prettyPhoto.css" rel="stylesheet" />
@@ -49,7 +49,7 @@ $current_page = basename($_SERVER['REQUEST_URI']);
               <div class="contactinfo">
                 <ul class="nav nav-pills">
                   <li>
-                    <a href=""><i class="fa fa-phone"></i> +84 123 456 789</a>
+                    <a href=""><i class="fa fa-phone"></i> +84 793 788 486</a>
                   </li>
                   <li>
                     <a href=""
@@ -57,7 +57,7 @@ $current_page = basename($_SERVER['REQUEST_URI']);
                       <span
                         class="__cf_email__"
                         data-cfemail="5d1a0e0e35322d1d3a303c3431733e3230"
-                        >[email protected]</span
+                        >thiendz362@gmail.com</span
                       ></a
                     >
                   </li>
@@ -68,7 +68,7 @@ $current_page = basename($_SERVER['REQUEST_URI']);
               <div class="social-icons pull-right">
                 <ul class="nav navbar-nav">
                   <li>
-                    <a href="https://facebook.com/GSShop"
+                    <a href="https://www.facebook.com/share/1DtcvjXYEj/"
                       ><i class="fa fa-facebook"></i
                     ></a>
                   </li>
@@ -98,9 +98,6 @@ $current_page = basename($_SERVER['REQUEST_URI']);
             <div class="col-sm-8">
               <div class="shop-menu pull-right">
                 <ul class="nav navbar-nav">
-                  <li>
-                    <a href=""><i class="fa fa-user"></i> Tài khoản</a>
-                  </li>
                   <li>
                     <a href="<?= $baseURL ?>order/history" class="<?php echo ($current_page == 'history') ? 'active' : ''; ?>">
                       <i class="fa fa-history"></i> Lịch sử mua hàng
