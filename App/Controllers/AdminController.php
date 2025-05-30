@@ -1,5 +1,4 @@
 <?php
-
 require_once __DIR__ . '/../Model/ProductModel.php';
 require_once __DIR__ . '/../Model/UserModel.php';
 require_once __DIR__ . '/../Model/OrderModel.php';
@@ -7,26 +6,32 @@ require_once __DIR__ . '/../Model/ChartModel.php';
 
 class AdminController
 {
-    public function index()
+    public function dashboard()
     {
-        $productModel = new ProductModel();
-        $userModel = new UserModel();
         $orderModel = new OrderModel();
+        $userModel = new UserModel();
         $chartModel = new ChartModel();
-        
-        // Lấy số liệu thống kê
-        $totalProducts = $productModel->getTotalProducts();
-        $totalUsers = $userModel->getTotalUsers();
-        $totalOrders = $orderModel->getTotalOrders();
-        $totalRevenue = $orderModel->getTotalRevenue();
-        $earnings = $chartModel->getEarningsPerMonth();
-        $orderStatusCounts = $chartModel->getOrderStatusCounts();
-        $topProducts = $chartModel->getTopProducts();
-        
-        // Lấy thống kê đơn hàng 7 ngày gần nhất
-        $recentOrderStats = $orderModel->getRecentOrderStats();
-        
-        include __DIR__ . '/../Views/Admin/dashboard.php';
+
+        // Lấy tham số time_range từ URL (mặc định: week)
+        $timeRange = $_GET['time_range'] ?? 'week';
+        if (!in_array($timeRange, ['day', 'week', 'month'])) {
+            $timeRange = 'week';
+        }
+
+        // Dữ liệu cho dashboard
+        $data = [
+            'section' => 'home',
+            'totalUsers' => $userModel->getTotalUsers(),
+            'totalOrders' => $orderModel->getTotalOrders(),
+            'totalRevenue' => $orderModel->getTotalRevenue(),
+            'earnings' => $chartModel->getEarningsPerMonth(),
+            'recentOrderStats' => $orderModel->getRecentOrderStats($timeRange),
+            'orderStatusCounts' => $this->formatOrderStatusCounts($orderModel->getOrderStatusCounts()),
+            'topProducts' => $chartModel->getTopProducts(5),
+            'timeRange' => $timeRange
+        ];
+
+        $this->render('dashboard', $data);
     }
 
     public function product()
@@ -55,13 +60,12 @@ class AdminController
             // Loại bỏ dấu chấm trong giá và kiểm tra định dạng
             $price = str_replace('.', '', $price);
             if (!is_numeric($price) || $price < 0) {
-                // Hiển thị lỗi nếu giá không hợp lệ
                 echo "<div class='alert alert-danger'>Giá sản phẩm không hợp lệ!</div>";
                 include __DIR__ . '/../Views/Admin/create.php';
                 return;
             }
             
-            // Xử lý upload hình ảnh
+            // Xử lý upload hình ảnh (nếu có)
             if (!empty($image)) {
                 $target_dir = __DIR__ . '/../../assets/uploads/';
                 if (!is_dir($target_dir)) {
@@ -69,11 +73,14 @@ class AdminController
                 }
                 $target_file = $target_dir . basename($image);
                 move_uploaded_file($_FILES['image']['tmp_name'], $target_file);
-                $image = '/uploads/' . $image;
+                $image = '/Uploads/' . $image;
+            } else {
+                $image = null;
             }
             
             $productModel = new ProductModel();
             $productModel->insertProduct($name, $price, $image);
+
             $config = require 'config.php';
             $baseURL = $config['baseURL'];
             header('Location: ' . $baseURL . 'admin/product');
@@ -91,8 +98,8 @@ class AdminController
             $productModel->deleteProduct($productId);
         }
         $config = require 'config.php';
-        $baseURL = $config['baseURL'];
-        header('Location: ' . $baseURL . 'admin/product');
+            $baseURL = $config['baseURL'];
+            header('Location: ' . $baseURL . 'admin/product');
         exit;
     }
 
@@ -121,8 +128,8 @@ class AdminController
             $userModel->deleteUser($userId);
         }
         $config = require 'config.php';
-        $baseURL = $config['baseURL'];
-        header('Location: ' . $baseURL . 'admin/user');
+            $baseURL = $config['baseURL'];
+            header('Location: ' . $baseURL . 'admin/product');
         exit;
     }
 
@@ -150,8 +157,8 @@ class AdminController
             $orderModel->deleteOrder($orderId);
         }
         $config = require 'config.php';
-        $baseURL = $config['baseURL'];
-        header('Location: ' . $baseURL . 'admin/orders');
+            $baseURL = $config['baseURL'];
+            header('Location: ' . $baseURL . 'admin/product');
         exit;
     }
 
@@ -162,7 +169,6 @@ class AdminController
         $order = $orderModel->getOrderById($orderId);
         
         if (!$order) {
-            // Xử lý trường hợp không tìm thấy đơn hàng
             echo "<div class='alert alert-danger'>Không tìm thấy đơn hàng!</div>";
             return;
         }
@@ -213,26 +219,76 @@ class AdminController
                 }
                 $target_file = $target_dir . basename($image);
                 move_uploaded_file($_FILES['image']['tmp_name'], $target_file);
-                $image = '/uploads/' . $image;
+                $image = '/Uploads/' . $image;
             } else {
-                $image = null; // Không cập nhật ảnh nếu không upload
+                $image = null;
             }
             
             // Cập nhật sản phẩm
             $productModel->updateProduct($productId, $name, $price, $image, $description);
             
-            // Chuyển hướng về danh sách sản phẩm
             $config = require 'config.php';
             $baseURL = $config['baseURL'];
             header('Location: ' . $baseURL . 'admin/product');
             exit;
         }
         
-        // Nếu không có ProductID, quay lại danh sách sản phẩm
         $config = require 'config.php';
-        $baseURL = $config['baseURL'];
-        header('Location: ' . $baseURL . 'admin/product');
+            $baseURL = $config['baseURL'];
+            header('Location: ' . $baseURL . 'admin/product');
         exit;
+    }
+
+    public function updateOrderStatus()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $orderId = $_POST['OrderID'] ?? 0;
+            $status = $_POST['status'] ?? '';
+            
+            try {
+                $orderModel = new OrderModel();
+                if ($orderModel->updateOrderStatus($orderId, $status)) {
+                    $_SESSION['message_type'] = 'success';
+                    $_SESSION['message'] = "Cập nhật trạng thái đơn hàng #$orderId thành công.";
+                } else {
+                    $_SESSION['message_type'] = 'error';
+                    $_SESSION['message'] = "Không tìm thấy đơn hàng hoặc không thể cập nhật.";
+                }
+            } catch (Exception $e) {
+                $_SESSION['message_type'] = 'error';
+                $_SESSION['message'] = "Lỗi: " . $e->getMessage();
+            }
+        }
+        // Chuyển hướng về trang danh sách đơn hàng hoặc chi tiết
+        $redirectUrl = isset($_GET['redirect']) && $_GET['redirect'] === 'detail' 
+            ? $this->baseURL . 'orderDetail?id=' . $orderId 
+            : $this->baseURL . 'orders';
+        header('Location: ' . $redirectUrl);
+        exit;
+    }
+
+    private function formatOrderStatusCounts($counts)
+    {
+        $statusMap = [
+            'pending' => 'Đặt hàng',
+            'completed' => 'Hoàn thành',
+            'canceled' => 'Hủy'
+        ];
+        $formatted = [];
+        foreach ($statusMap as $key => $label) {
+            $found = array_filter($counts, fn($item) => $item['status'] === $key || $item['status'] === $label);
+            $formatted[] = [
+                'status' => $label,
+                'count' => $found ? reset($found)['count'] : 0
+            ];
+        }
+        return $formatted;
+    }
+
+    private function render($view, $data = [])
+    {
+        extract($data);
+        include __DIR__ . '/../Views/Admin/' . $view . '.php';
     }
 }
 ?>

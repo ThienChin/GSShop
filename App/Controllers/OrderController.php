@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../Model/OrderModel.php';
 require_once __DIR__ . '/../Model/ProductModel.php';
+require_once __DIR__ . '/../Model/UserModel.php'; // Thêm UserModel
 
 class OrderController
 {
@@ -113,19 +114,13 @@ class OrderController
             $userId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null;
 
             try {
-                // Ghi log dữ liệu để debug
                 error_log("Tạo đơn hàng: user_id=$userId, total=$total, billing_info=$billingInfo, shipping_address=$shippingAddress");
-
-                // Bắt đầu giao dịch
                 $orderModel->beginTransaction();
-
-                // Tạo đơn hàng
                 $orderId = $orderModel->createOrder($userId, $total, $billingInfo, $shippingAddress, $paymentMethod, $notes);
                 if (!$orderId) {
                     throw new Exception('Không thể tạo đơn hàng. Vui lòng kiểm tra thông tin và thử lại.');
                 }
 
-                // Thêm các mục đơn hàng
                 foreach ($cartItems as $item) {
                     $productId = $item['source'] === 'product' ? $item['id'] : null;
                     $featuredproductId = $item['source'] === 'featured' ? $item['id'] : null;
@@ -135,13 +130,8 @@ class OrderController
                     }
                 }
 
-                // Xác nhận giao dịch
                 $orderModel->commit();
-
-                // Xóa giỏ hàng
                 unset($_SESSION['cart']);
-
-                // Chuyển hướng đến trang xác nhận
                 header('Location: ' . $baseURL . 'order/checkout_success?order_id=' . $orderId);
                 exit;
             } catch (Exception $e) {
@@ -152,7 +142,6 @@ class OrderController
             }
         }
 
-        // Tải giao diện thanh toán
         include './App/Views/Order/checkout.php';
     }
 
@@ -175,6 +164,7 @@ class OrderController
 
         include './App/Views/Order/checkout_success.php';
     }
+
     public function history()
     {
         if (session_status() === PHP_SESSION_NONE) {
