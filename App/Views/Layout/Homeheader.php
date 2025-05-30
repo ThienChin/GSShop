@@ -99,17 +99,9 @@ $current_page = basename($_SERVER['REQUEST_URI']);
               <div class="shop-menu pull-right">
                 <ul class="nav navbar-nav">
                   <li>
-                    <a href=""><i class="fa fa-user"></i> Tài khoản</a>
-                  </li>
-                  <li>
-                    <a href="<?= $baseURL ?>order/checkout"
-                      ><i class="fa fa-crosshairs"></i> Thanh toán</a
-                    >
-                  </li>
-                  <li>
-                    <a href="<?= $baseURL ?>cart/cart"
-                      ><i class="fa fa-shopping-cart"></i> Giỏ hàng</a
-                    >
+                    <a href="<?= $baseURL ?>order/history" class="<?php echo ($current_page == 'history') ? 'active' : ''; ?>">
+                      <i class="fa fa-history"></i> Lịch sử mua hàng
+                    </a>
                   </li>
                   <li>
                     <?php if (isset($_SESSION['username'])): ?>

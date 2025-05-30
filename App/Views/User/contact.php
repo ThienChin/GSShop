@@ -120,7 +120,6 @@ $assets = $config['assets'];
             <div class="row">        
                 <div class="col-sm-12">                             
                     <h2 class="title text-center">Liên hệ <strong>GSShop</strong></h2>                                   
-                    <div id="gmap" class="contact-map"></div>
                 </div>                
             </div>      
             <div class="row">   

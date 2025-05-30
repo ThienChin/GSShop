@@ -175,5 +175,57 @@ class OrderController
 
         include './App/Views/Order/checkout_success.php';
     }
+    public function history()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $config = require 'config.php';
+        $baseURL = $config['baseURL'];
+
+        // Kiểm tra đăng nhập
+        if (!isset($_SESSION['username'])) {
+            $_SESSION['redirect_after_login'] = $baseURL . 'order/history';
+            $_SESSION['error'] = 'Vui lòng đăng nhập để xem lịch sử mua hàng.';
+            header('Location: ' . $baseURL . 'user/login');
+            exit;
+        }
+
+        $orderModel = new OrderModel();
+        $userModel = new UserModel();
+
+        // Lấy thông tin người dùng dựa trên username
+        $user = $userModel->getUserByIdentifier($_SESSION['username']);
+        if (!$user) {
+            $_SESSION['error'] = 'Không tìm thấy thông tin người dùng.';
+            header('Location: ' . $baseURL . 'home/index');
+            exit;
+        }
+
+        // Lấy danh sách đơn hàng của người dùng
+        $orders = $orderModel->getOrdersByUserId($user['id']);
+        $processedOrderIds = []; // Mảng để theo dõi các order_id đã xử lý
+        $uniqueOrders = []; // Mảng lưu các đơn hàng không trùng lặp
+
+        foreach ($orders as $order) {
+            if (!in_array($order['id'], $processedOrderIds)) {
+                $orderDetails = $orderModel->getOrderById($order['id']);
+                if ($orderDetails) {
+                    $order['items'] = $orderDetails['items'] ?? [];
+                    $order['billing_info'] = $orderDetails['billing_info'] ?? [];
+                    $order['shipping_address'] = $orderDetails['shipping_address'] ?? [];
+                    $uniqueOrders[] = $order;
+                    $processedOrderIds[] = $order['id'];
+                }
+            }
+        }
+
+        // Gán lại biến $orders để sử dụng trong view
+        $orders = $uniqueOrders;
+
+        // Tải giao diện lịch sử mua hàng
+        include './App/Views/Order/history.php';
+    }
 }
 ?>
