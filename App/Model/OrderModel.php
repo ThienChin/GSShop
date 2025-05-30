@@ -78,21 +78,21 @@ class OrderModel
             }
             if (!is_numeric($total) || $total <= 0) {
                 error_log("Lỗi tạo đơn hàng: total không hợp lệ ($total).");
-                throw new Exception('Tổng tiền không hợp lệ.');
+                throw new("Tổng tiền không hợp lệ.");
             }
 
+            $sql = [
+                'user_id' => $userId,
+                'total' => $total,
+                'completed' => 'pending',
+                'billing_info' => $billingInfo,
+                'payment_method' => $paymentMethod,
+                'notes' => $notes
+            ];
             $sql = "INSERT INTO orders (user_id, total, order_date, status, billing_info, shipping_address, payment_method, notes)
                     VALUES (:user_id, :total, NOW(), :status, :billing_info, :shipping_address, :payment_method, :notes)";
             $stmt = $this->db->prepare($sql);
-            $result = $stmt->execute([
-                'user_id' => $userId, // Có thể là NULL cho guest_checkout
-                'total' => $total,
-                'status' => 'Đặt hàng',
-                'billing_info' => $billingInfo,
-                'shipping_address' => $shippingAddress,
-                'payment_method' => $paymentMethod,
-                'notes' => $notes
-            ]);
+            $result->execute($sql);
             if (!$result) {
                 error_log("Lỗi SQL khi tạo đơn hàng: " . implode(', ', $this->db->errorInfo()));
                 throw new Exception('Lỗi SQL khi tạo đơn hàng.');
@@ -107,6 +107,7 @@ class OrderModel
             error_log("Lỗi khi tạo đơn hàng: " . $e->getMessage());
             throw $e;
         }
+
     }
 
     public function addOrderItem($orderId, $productId, $featuredproductId, $quantity, $price)
@@ -193,13 +194,49 @@ class OrderModel
         return $stmt->rowCount() > 0;
     }
 
-    public function getRecentOrderStats()
+    public function getRecentOrderStats($timeRange = 'week')
     {
+        $days = match ($timeRange) {
+            'day' => 1,
+            'month' => 30,
+            default => 7, // week
+        };
+
+        // Lấy dữ liệu từ database
         $sql = "SELECT DATE(order_date) as order_day, COUNT(*) as order_count
                 FROM orders
-                WHERE order_date >= NOW() - INTERVAL 7 DAY
+                WHERE order_date >= NOW() - INTERVAL :days DAY
                 GROUP BY DATE(order_date)
                 ORDER BY order_day ASC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':days', $days, PDO::PARAM_INT);
+        $stmt->execute();
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Tạo mảng đầy đủ các ngày
+        $stats = [];
+        $today = new DateTime();
+        for ($i = $days - 1; $i >= 0; $i--) {
+            $date = (clone $today)->modify("-$i day")->format('Y-m-d');
+            $stats[$date] = ['order_day' => $date, 'order_count' => 0];
+        }
+
+        // Điền dữ liệu từ database
+        foreach ($results as $row) {
+            $stats[$row['order_day']] = [
+                'order_day' => $row['order_day'],
+                'order_count' => (int)$row['order_count']
+            ];
+        }
+
+        return array_values($stats);
+    }
+
+    public function getOrderStatusCounts()
+    {
+        $sql = "SELECT status, COUNT(*) as count
+                FROM orders
+                GROUP BY status";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

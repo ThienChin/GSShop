@@ -19,3 +19,9 @@
 
     echo json_encode($status);
     die;
+
+    <li>
+                    <a href="<?= $baseURL ?>order/history" class="<?php echo ($current_page == 'history') ? 'active' : ''; ?>">
+                      <i class="fa fa-history"></i> Lịch sử mua hàng
+                    </a>
+                  </li>

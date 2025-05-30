@@ -86,16 +86,6 @@ $productList = array_slice($filteredProducts, $offset, $productsPerPage);
 include_once './App/Views/Layout/Homeheader.php';
 ?>
 
-    <section id="advertisement">
-      <div class="container" style="text-align: center">
-        <img
-          src="<?= $base ?>assets/images/home/shipping.png"
-          alt="Khuyến mãi GSShop"
-          style="height: 150px; width: 620px"
-        />
-      </div>
-    </section>
-
     <section>
       <div class="container">
         <div class="row">
@@ -226,25 +216,6 @@ include_once './App/Views/Layout/Homeheader.php';
             <span id="price-min"><?= isset($_GET['min_price']) ? (float)$_GET['min_price'] : 10 ?> triệu</span>
             <span id="price-max" class="pull-right"><?= isset($_GET['max_price']) ? (float)$_GET['max_price'] : 80 ?> triệu</span>
         </div>
-        
-        <!-- Form filter -->
-        <form id="price-filter-form" action="<?= $baseURL ?>product/index" method="get">
-            <input type="hidden" name="min_price" id="min-price-input" value="<?= isset($_GET['min_price']) ? htmlspecialchars($_GET['min_price']) : 10 ?>">
-            <input type="hidden" name="max_price" id="max-price-input" value="<?= isset($_GET['max_price']) ? htmlspecialchars($_GET['max_price']) : 80 ?>">
-            
-            <?php 
-            $preserveParams = ['category', 'brand', 'page'];
-            foreach ($preserveParams as $param) {
-                if (isset($_GET[$param])) {
-                    echo '<input type="hidden" name="'.htmlspecialchars($param).'" value="'.htmlspecialchars($_GET[$param]).'">';
-                }
-            }
-            ?>
-            
-            <button type="submit" class="btn btn-primary btn-block" style="margin-top: 15px;">
-                <i class="fa fa-search"></i> Lọc theo giá
-            </button>
-        </form>
     </div>
 </div>
 
@@ -303,7 +274,6 @@ include_once './App/Views/Layout/Homeheader.php';
                         </div>
                         <div class="choose">
                           <ul class="nav nav-pills nav-justified">
-                            <li><a href="#"><i class="fa fa-plus-square"></i> Yêu thích</a></li>
                             <li><a href="<?= $baseURL ?>product/detail/<?= $product['id'] ?>"><i class="fa fa-plus-square"></i> Xem chi tiết</a></li>
                           </ul>
                         </div>

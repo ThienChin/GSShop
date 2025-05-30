@@ -131,22 +131,20 @@
                     <a href=""><i class="fa fa-user"></i> Tài khoản</a>
                   </li>
                   <li>
-                    <a href=""><i class="fa fa-star"></i> Yêu thích</a>
+                    <a href="<?= $baseURL ?>order/history">
+                      <i class="fa fa-history"></i> Lịch sử mua hàng
+                    </a>
                   </li>
                   <li>
-                    <a href="<?= $baseURL ?>cart/checkout"
-                      ><i class="fa fa-crosshairs"></i> Thanh toán</a
-                    >
-                  </li>
-                  <li>
-                    <a href="<?= $baseURL ?>cart/cart"
-                      ><i class="fa fa-shopping-cart"></i> Giỏ hàng</a
-                    >
-                  </li>
-                  <li>
-                    <a href="<?= $baseURL ?>user/login" class="active"
-                      ><i class="fa fa-lock"></i> Đăng nhập</a
-                    >
+                    <?php if (isset($_SESSION['username'])): ?>
+                      <a href="<?= $baseURL ?>user/logout">
+                        <i class="fa fa-user"></i> <?= htmlspecialchars($_SESSION['username']) ?>
+                      </a>
+                    <?php else: ?>
+                      <a href="<?= $baseURL ?>user/login">
+                        <i class="fa fa-lock"></i> Đăng nhập
+                      </a>
+                    <?php endif; ?>
                   </li>
                 </ul>
               </div>

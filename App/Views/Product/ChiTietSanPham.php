@@ -144,14 +144,6 @@ include_once './App/Views/Layout/Homeheader.php';
                             </div>
                         </div>
                         
-                        <div class="price-range">
-                            <h2>Khoảng giá</h2>
-                            <div class="well">
-                                <input type="text" class="span2" value="" data-slider-min="0" data-slider-max="100" data-slider-step="5" data-slider-value="[10,80]" id="sl2"><br />
-                                <b>0 triệu</b> <b class="pull-right">100 triệu</b>
-                            </div>
-                        </div>
-                        
                         <div class="shipping text-center">
                             <img src="<?= $base ?>assets/images/home/shipping.png" alt="Khuyến mãi GSShop" style="height: 250px; width: 250px" />
                         </div>

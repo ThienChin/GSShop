@@ -124,24 +124,40 @@ $assets = $config['assets'];
         
         <div class="header-middle">
             <div class="container">
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="logo pull-left">
-                            <a href="<?= $baseURL ?>home/index"><img src="<?= $base ?>assets/images/home/logo.png" alt="GSShop Logo" /></a>
-                        </div>
-                    </div>
-                    <div class="col-sm-8">
-                        <div class="shop-menu pull-right">
-                            <ul class="nav navbar-nav">
-                                <li><a href=""><i class="fa fa-user"></i> Tài khoản</a></li>
-                                <li><a href=""><i class="fa fa-star"></i> Yêu thích</a></li>
-                                <li><a href="<?= $baseURL ?>order/checkout"><i class="fa fa-crosshairs"></i> Thanh toán</a></li>
-                                <li><a href="<?= $baseURL ?>cart/cart"><i class="fa fa-shopping-cart"></i> Giỏ hàng</a></li>
-                                <li><a href="<?= $baseURL ?>user/login"><i class="fa fa-lock"></i> Đăng nhập</a></li>
-                            </ul>
-                        </div>
-                    </div>
+            <div class="row">
+                <div class="col-sm-4">
+                <div class="logo pull-left">
+                    <a href="<?= $baseURL ?>home/index"
+                    ><img src="<?= $base ?>assets/images/home/logo.png" alt="GSShop Logo"
+                    /></a>
                 </div>
+                </div>
+                <div class="col-sm-8">
+                <div class="shop-menu pull-right">
+                    <ul class="nav navbar-nav">
+                    <li>
+                        <a href=""><i class="fa fa-user"></i> Tài khoản</a>
+                    </li>
+                    <li>
+                        <a href="<?= $baseURL ?>order/history" class="<?php echo ($current_page == 'history') ? 'active' : ''; ?>">
+                        <i class="fa fa-history"></i> Lịch sử mua hàng
+                        </a>
+                    </li>
+                    <li>
+                        <?php if (isset($_SESSION['username'])): ?>
+                        <a href="<?= $baseURL ?>user/logout">
+                            <i class="fa fa-user"></i> <?= htmlspecialchars($_SESSION['username']) ?>
+                        </a>
+                        <?php else: ?>
+                        <a href="<?= $baseURL ?>user/login">
+                            <i class="fa fa-lock"></i> Đăng nhập
+                        </a>
+                        <?php endif; ?>
+                    </li>
+                    </ul>
+                </div>
+                </div>
+            </div>
             </div>
         </div>
     
