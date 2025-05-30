@@ -3,11 +3,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$config = require __DIR__ . '/../../../config.php';
-$base = $config['base'];
-$baseURL = $config['baseURL'];
-$assets = $config['assets'];
-
 // Đặt section
 $section = 'create';
 
@@ -66,9 +61,15 @@ include_once __DIR__ . '/../Layout/Adminheader.php';
             <div class="main-header">
                 <div class="main-header-logo">
                     <div class="logo-header" data-background-color="dark">
-                        <a href="<?= $baseURL ?>admin" class="logo">
-                            <img src="<?= $base ?>assets/images/logo.png" alt="navbar brand" class="navbar-brand" height="50" />
-                        </a>
+                        <a href="<?= $baseURL ?>home/index" class="logo">
+                        <img
+                            src="<?= $base ?>assets/images/home/logo.png"
+                            alt="navbar brand"
+                            class="navbar-brand"
+                            height="100"
+                            width="200"
+                        />
+                    </a>
                         <div class="nav-toggle">
                             <button class="btn btn-toggle toggle-sidebar"><i class="gg-menu-right"></i></button>
                             <button class="btn btn-toggle sidenav-toggler"><i class="gg-menu-left"></i></button>
@@ -146,7 +147,7 @@ include_once __DIR__ . '/../Layout/Adminheader.php';
                             <a href="<?= $baseURL ?>admin/product" class="btn btn-light btn-sm ms-auto"><i class="fas fa-arrow-left"></i> Quay lại</a>
                         </div>
                         <div class="card-body p-4">
-                            <form action="<?= $baseURL ?>admin/edit" method="POST" enctype="multipart/form-data" id="productForm">
+                            <form action="<?= $baseURL ?>admin/create" method="POST" enctype="multipart/form-data" id="productForm">
                                 <input type="hidden" name="ProductID" value="<?= htmlspecialchars($product['id'] ?? '') ?>">
                                 <div class="row">
                                     <div class="col-md-6">
@@ -219,8 +220,9 @@ include_once __DIR__ . '/../Layout/Adminheader.php';
     <script src="<?= $base ?>assets/admin/js/demo.js"></script>
 
     <script>
+    //Format price input
     document.getElementById('price').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
+        let value = e.target.value.replace(/\D/g, '');Add commentMore actions
         if (value) {
             value = parseInt(value).toLocaleString('vi-VN');
             e.target.value = value;
@@ -230,12 +232,13 @@ include_once __DIR__ . '/../Layout/Adminheader.php';
     });
 
     document.getElementById('image').addEventListener('change', function(e) {
-        const preview = document.getElementById('imagePreview');
-        preview.innerHTML = '';
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            if (file.size > 5 * 1024 * 1024) {
-                alert('Kích thước file ảnh không được vượt quá 5MB');
+    const preview = document.getElementById('imagePreview');
+    preview.innerHTML = '';
+    
+    if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Kích thước file ảnh không được vượt quá 5MB');
                 e.target.value = '';
                 return;
             }

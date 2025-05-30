@@ -65,7 +65,7 @@ class AdminController
                 return;
             }
             
-            // Xử lý upload hình ảnh
+            // Xử lý upload hình ảnh (nếu có)
             if (!empty($image)) {
                 $target_dir = __DIR__ . '/../../assets/uploads/';
                 if (!is_dir($target_dir)) {
@@ -74,11 +74,16 @@ class AdminController
                 $target_file = $target_dir . basename($image);
                 move_uploaded_file($_FILES['image']['tmp_name'], $target_file);
                 $image = '/Uploads/' . $image;
+            } else {
+                $image = null;
             }
             
             $productModel = new ProductModel();
             $productModel->insertProduct($name, $price, $image);
-            header('Location: ' . $this->baseURL . 'admin/product');
+
+            $config = require 'config.php';
+            $baseURL = $config['baseURL'];
+            header('Location: ' . $baseURL . 'admin/product');
             exit;
         }
         
@@ -92,7 +97,9 @@ class AdminController
             $productModel = new ProductModel();
             $productModel->deleteProduct($productId);
         }
-        header('Location: ' . $this->baseURL . 'admin/product');
+        $config = require 'config.php';
+            $baseURL = $config['baseURL'];
+            header('Location: ' . $baseURL . 'admin/product');
         exit;
     }
 
@@ -120,7 +127,9 @@ class AdminController
             $userModel = new UserModel();
             $userModel->deleteUser($userId);
         }
-        header('Location: ' . $this->baseURL . 'admin/user');
+        $config = require 'config.php';
+            $baseURL = $config['baseURL'];
+            header('Location: ' . $baseURL . 'admin/product');
         exit;
     }
 
@@ -147,7 +156,9 @@ class AdminController
             $orderModel = new OrderModel();
             $orderModel->deleteOrder($orderId);
         }
-        header('Location: ' . $this->baseURL . 'admin/orders');
+        $config = require 'config.php';
+            $baseURL = $config['baseURL'];
+            header('Location: ' . $baseURL . 'admin/product');
         exit;
     }
 
@@ -216,11 +227,15 @@ class AdminController
             // Cập nhật sản phẩm
             $productModel->updateProduct($productId, $name, $price, $image, $description);
             
-            header('Location: ' . $this->baseURL . 'admin/product');
+            $config = require 'config.php';
+            $baseURL = $config['baseURL'];
+            header('Location: ' . $baseURL . 'admin/product');
             exit;
         }
         
-        header('Location: ' . $this->baseURL . 'admin/product');
+        $config = require 'config.php';
+            $baseURL = $config['baseURL'];
+            header('Location: ' . $baseURL . 'admin/product');
         exit;
     }
 

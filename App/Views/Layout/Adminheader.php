@@ -1,9 +1,9 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
+if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-$config = require __DIR__ . '/../../../config.php';
+$config = require 'config.php';
 $base = $config['base'];
 $baseURL = $config['baseURL'];
 $assets = $config['assets'];

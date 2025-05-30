@@ -17,8 +17,14 @@ include_once __DIR__ . '/../Layout/Adminheader.php';
         <div class="sidebar" data-background-color="dark">
             <div class="sidebar-logo">
                 <div class="logo-header" data-background-color="dark">
-                    <a href="<?= $baseURL ?>admin" class="logo">
-                        <img src="<?= $base ?>assets/images/logo.png" alt="navbar brand" class="navbar-brand" height="50" />
+                    <a href="<?= $baseURL ?>home/index" class="logo">
+                        <img
+                            src="<?= $base ?>assets/images/home/logo.png"
+                            alt="navbar brand"
+                            class="navbar-brand"
+                            height="100"
+                            width="200"
+                        />
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar"><i class="gg-menu-right"></i></button>
